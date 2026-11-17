@@ -22,6 +22,7 @@
       <a href="materiais.html">Materiais</a>
       <a href="lotes.html">Lotes &amp; Meta</a>
       <a href="orcamentos.html">Orçamentos</a>
+      <a href="pedidos.html">Pedidos</a>
       <a href="guia.html">Guia</a>
       <a href="dados.html" aria-current="page">Dados</a>
       <a href="investimento.html">Investimento</a>
@@ -40,7 +41,7 @@
         <div class="kick">09 / Backup e dados</div>
         <h1>Seus números já ficam salvos — agora dá para levá-los junto</h1>
       </div>
-      <p>Tudo é gravado automaticamente neste navegador. O backup .json leva calculadora, materiais, lotes, orçamentos e a aba Investimento (impressoras e lançamentos) para outro navegador, outra máquina — ou para uma gaveta segura.</p>
+      <p>Tudo é gravado automaticamente neste navegador. O backup .json leva calculadora, materiais, lotes, orçamentos, Investimento (impressoras e lançamentos) e Pedidos para outro navegador, outra máquina — ou para uma gaveta segura.</p>
     </div>
 
     <div class="panel rv" style="padding:0;margin-bottom:18px">
@@ -50,14 +51,14 @@
         <div class="kpi"><b id="sumLot">nenhum</b><span>lote travado</span></div>
         <div class="kpi"><b id="sumInv">0 · 0</b><span>impressoras · lançamentos de investimento</span></div>
         <div class="kpi"><b id="sumAt">—</b><span>última gravação automática</span></div>
-        <div class="kpi"><b id="sumApp">v2</b><span>formato do backup</span></div>
+        <div class="kpi"><b id="sumPedidos">0</b><span>pedidos no fluxo de venda</span></div>
       </div>
     </div>
 
     <div class="two">
       <div class="panel rv" style="padding:22px">
         <div class="p-head"><span class="num">⬇</span><h3>Exportar</h3></div>
-        <p class="note" style="margin-top:0">Um único arquivo .json com todas as suas configurações — inclui preços de materiais, orçamentos salvos, impressoras cadastradas e lançamentos de investimento.</p>
+        <p class="note" style="margin-top:0">Um único arquivo .json com todas as suas configurações — inclui preços de materiais, orçamentos salvos, impressoras cadastradas, lançamentos de investimento e pedidos.</p>
         <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px">
           <button class="btn solid" id="expBtn">⬇ Baixar backup (.json)</button>
           <button class="btn" id="copyBtn">Copiar JSON</button>
@@ -76,7 +77,7 @@
 
     <div class="panel rv" style="padding:22px;margin-top:18px;border-color:rgba(255,92,26,.4)">
       <div class="p-head"><span class="num">×</span><h3>Do zero</h3></div>
-      <p class="note" style="margin-top:0">Apaga deste navegador tudo o que foi personalizado: valores da calculadora, preços de materiais, lote travado, orçamentos e toda a aba Investimento (impressoras e lançamentos).</p>
+      <p class="note" style="margin-top:0">Apaga deste navegador tudo o que foi personalizado: valores da calculadora, preços de materiais, lote travado, orçamentos, pedidos e toda a aba Investimento (impressoras e lançamentos).</p>
       <button class="btn" id="resetBtn" style="margin-top:14px;color:var(--hot)">Restaurar valores de fábrica</button>
     </div>
   </section>

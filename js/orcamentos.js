@@ -17,9 +17,11 @@
       info.append(b,' · ',sp);
       const right=document.createElement('div');right.style.cssText='display:flex;gap:12px;align-items:center';
       const mon=document.createElement('span');mon.className='mono';mon.textContent=brl(q.preco*lote);
+      const link=document.createElement('a');link.className='lotbtn';link.href='pedidos.html';link.textContent='→ pedido';
+      link.title='Transformar este orçamento em pedido (pagamento e entrega)';
       const x=document.createElement('button');x.className='x';x.type='button';x.textContent='×';x.setAttribute('aria-label','Remover '+q.nome+' do orçamento');
       x.onclick=()=>{quotes.splice(i,1);P.store();renderQuotes();};
-      right.append(mon,x);row.append(info,right);l.append(row);
+      right.append(mon,link,x);row.append(info,right);l.append(row);
     });
     const t=quotes.reduce((a,q)=>a+q.preco*(q.lote||1),0);
     $('#qTotal').textContent=brl(t);

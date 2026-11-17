@@ -65,11 +65,13 @@
   function renderPrinters(){
     const tb=$('#prTable');tb.innerHTML='';
     if(!INV.printers.length){const tr=document.createElement('tr');const td=document.createElement('td');
-      td.colSpan=8;td.style.color='var(--dim)';td.textContent='Nenhuma impressora cadastrada ainda — use o formulário acima.';
+      td.colSpan=9;td.style.color='var(--dim)';td.textContent='Nenhuma impressora cadastrada ainda — use o formulário acima.';
       tr.append(td);tb.append(tr);}
     INV.printers.forEach(p=>{
       const linked=INV.buys.filter(b=>b.printerId===p.id);
       const lSum=linked.reduce((a,b)=>a+(b.total||0),0);
+      const sold=P.orders.filter(o=>o.printerId===p.id&&(o.status==='pago'||o.status==='entregue'));
+      const soldSum=sold.reduce((a,o)=>a+(o.total||0),0);
       const tr=document.createElement('tr');
       const t1=document.createElement('td');const b1=document.createElement('b');b1.textContent=p.nome;t1.append(b1);
       if(p.marca){const sp=document.createElement('div');sp.className='m';sp.style.color='var(--dim)';sp.textContent=p.marca;t1.append(sp);}
@@ -79,7 +81,11 @@
       const t5=document.createElement('td');t5.className='m';t5.textContent=brl(p.vida>0?p.preco/p.vida:0)+'/h';
       const t6=document.createElement('td');t6.className='m';t6.textContent=linked.length?linked.length+' · '+brl(lSum):'—';
       const t7=document.createElement('td');const b7=document.createElement('b');b7.textContent=brl(p.preco+lSum);t7.append(b7);
-      const t8=document.createElement('td');const act=document.createElement('div');act.className='rowacts';
+      const t8=document.createElement('td');const b8=document.createElement('b');b8.textContent=soldSum?brl(soldSum):'—';t8.append(b8);
+      if(soldSum){const sp8=document.createElement('div');sp8.className='m';
+        sp8.style.color=soldSum>=p.preco?'#5FD89F':'var(--dim)';
+        sp8.textContent=sold.length+' vend.'+(soldSum>=p.preco?' · payback ✓':' · '+nf(soldSum/p.preco*100)+'% da máquina');t8.append(sp8);}
+      const t9=document.createElement('td');const act=document.createElement('div');act.className='rowacts';
       const calc=document.createElement('button');calc.type='button';calc.className='lotbtn';calc.textContent='→ calculadora';
       calc.title='Levar valor, vida útil e consumo para a calculadora';
       calc.onclick=e=>{e.stopPropagation();S.maquina=p.preco;S.vida=p.vida;S.potencia=p.pot;P.saveSettings();
@@ -93,12 +99,15 @@
         INV.buys.forEach(b=>{if(b.printerId===p.id)b.printerId='';});
         INV.printers.splice(INV.printers.indexOf(p),1);
         if(editP===p.id)pCancel();P.invStore();renderAll();};
-      act.append(calc,ed,del);t8.append(act);
-      tr.append(t1,t2,t3,t4,t5,t6,t7,t8);tb.append(tr);
+      act.append(calc,ed,del);t9.append(act);
+      tr.append(t1,t2,t3,t4,t5,t6,t7,t8,t9);tb.append(tr);
     });
     const fSum=INV.printers.reduce((a,p)=>a+(p.preco||0),0);
-    $('#prHint').textContent=$('#prHint').textContent||
-      (INV.printers.length?'Frota: '+INV.printers.length+' máquina'+(INV.printers.length>1?'s':'')+' · '+brl(fSum)+' investidos em equipamentos.':'');
+    const soldTot=P.orders.filter(o=>o.status==='pago'||o.status==='entregue').reduce((a,o)=>a+(o.total||0),0);
+    if($('#prHint').textContent.indexOf('calculadora')<0)
+      $('#prHint').textContent=INV.printers.length
+        ?('Frota: '+INV.printers.length+' máquina'+(INV.printers.length>1?'s':'')+' · '+brl(fSum)+' investidos em equipamentos'+(soldTot?' · faturamento pago/entregue: '+brl(soldTot)+' — o payback aparece por linha.':'.'))
+        :'';
   }
 
   /* ============================================================

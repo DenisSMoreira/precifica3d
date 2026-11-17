@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pedidos, pagamento e entrega — Precifica 3D</title>
+<meta name="description" content="Fluxo de venda do Precifica 3D: transforme orçamentos em pedidos, registre o pagamento do cliente e a entrega da peça — com faturamento, valores a receber e payback por impressora.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<script>document.documentElement.classList.remove('no-js')</script>
+</head>
+<body>
+<div class="grain"></div>
+
+<header class="top">
+  <div class="top-in">
+    <a class="brand" href="index.html"><span class="mark"><i></i><i></i><i></i><i></i></span>PRECIFICA<span>3D</span></a>
+    <nav class="nav">
+      <a href="index.html">Calculadora</a>
+      <a href="materiais.html">Materiais</a>
+      <a href="lotes.html">Lotes &amp; Meta</a>
+      <a href="orcamentos.html">Orçamentos</a>
+      <a href="pedidos.html" aria-current="page">Pedidos</a>
+      <a href="guia.html">Guia</a>
+      <a href="dados.html">Dados</a>
+      <a href="investimento.html">Investimento</a>
+    </nav>
+    <div class="top-price">Peça atual <b id="chipPrice">R$ 0,00</b></div>
+  </div>
+</header>
+
+<main id="top">
+  <div class="wrap">
+
+  <!-- VISÃO COMERCIAL -->
+  <section id="vendas" class="blk">
+    <div class="head rv">
+      <div>
+        <div class="kick">14 / Pedidos</div>
+        <h1>Orçamento aprovado vira pedido — e o pedido anda até a entrega</h1>
+      </div>
+      <p>Registre para qual cliente, qual máquina vai produzir e acompanhe: <b>aguardando pagamento → pago → entregue</b>. Os números de venda aparecem aqui e viram payback na aba Investimento.</p>
+    </div>
+    <div class="panel rv" style="padding:0;margin-bottom:18px">
+      <div class="kpis" style="border-bottom:none">
+        <div class="kpi neg"><b id="kpiAreceber">R$ 0,00</b><span>a receber (aguardando pagamento)</span></div>
+        <div class="kpi pos"><b id="kpiFat">R$ 0,00</b><span>faturamento (pagos + entregues)</span></div>
+        <div class="kpi"><b id="kpiMes">R$ 0,00</b><span>recebido neste mês</span></div>
+        <div class="kpi"><b id="kpiLucro">R$ 0,00</b><span>lucro estimado nas vendas fechadas</span></div>
+      </div>
+    </div>
+    <div class="panel rv" style="padding:18px">
+      <div class="p-head" style="margin:-18px -18px 16px"><span class="num">▮</span><h3>Receita por mês</h3><span class="hint">últimos 12 meses · pela data do pagamento</span></div>
+      <div class="bars" id="oBars" role="img" aria-label="Receita por mês nos últimos 12 meses"></div>
+      <p class="note" id="oNote">—</p>
+    </div>
+  </section>
+
+  <!-- NOVO PEDIDO -->
+  <section id="novo" class="blk" style="padding-top:0">
+    <div class="panel rv">
+      <div class="p-head"><span class="num">＋</span><h3 id="oFormTitle">Novo pedido</h3><span class="hint">nasce do orçamento salvo — ou de um item livre</span></div>
+      <div class="p-body">
+        <div class="grid">
+          <div class="field">
+            <div class="f-top"><label for="f-o-cliente">Cliente *</label><span class="u">texto</span></div>
+            <input type="text" id="f-o-cliente" placeholder="Maria / Loja do bairro / @insta">
+          </div>
+          <div class="field">
+            <div class="f-top"><label for="f-o-quote">Orçamento salvo</label><span class="u">opcional</span></div>
+            <select id="f-o-quote"></select>
+          </div>
+          <div class="field">
+            <div class="f-top"><label for="f-o-desc">Item *</label><span class="u">texto</span></div>
+            <input type="text" id="f-o-desc" placeholder="Vaso espiral 15cm">
+          </div>
+          <div class="field">
+            <div class="f-top"><label for="f-o-qtd">Quantidade</label><span class="u">un</span></div>
+            <input type="number" id="f-o-qtd" min="1" max="10000" step="1" value="1">
+          </div>
+          <div class="field">
+            <div class="f-top"><label for="f-o-unit">Valor unitário combinado *</label><span class="u">R$</span></div>
+            <input type="number" id="f-o-unit" min="0" max="1000000" step="0.01" placeholder="49.90">
+          </div>
+          <div class="field">
+            <div class="f-top"><label for="f-o-forma">Forma de pagamento</label><span class="u">select</span></div>
+            <select id="f-o-forma">
+              <option>Pix</option><option>Cartão</option><option>Dinheiro</option>
+              <option>Transferência</option><option>Outro</option><option>A combinar</option>
+            </select>
+          </div>
+          <div class="field">
+            <div class="f-top"><label for="f-o-printer">Produzirá na impressora</label><span class="u">opcional</span></div>
+            <select id="f-o-printer"></select>
+          </div>
+          <div class="field">
+            <div class="f-top"><label for="f-o-data">Data do pedido</label><span class="u">data</span></div>
+            <input type="date" id="f-o-data">
+          </div>
+          <div class="field">
+            <div class="f-top"><label for="f-o-obs">Observações</label><span class="u">texto</span></div>
+            <input type="text" id="f-o-obs" placeholder="cor, prazo, frete por conta do cliente…">
+          </div>
+        </div>
+        <p class="note" id="oPreview">Total do pedido: —</p>
+        <div class="acts" style="padding:16px 0 0">
+          <button class="btn solid" id="oAdd" type="button">＋ Criar pedido (aguardando pagamento)</button>
+          <button class="btn" id="oCancel" type="button" hidden>Cancelar edição</button>
+        </div>
+        <p class="note" id="oMsg" hidden></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PIPELINE -->
+  <section id="pipeline" class="blk" style="padding-top:0">
+    <div class="rv">
+      <div class="chips" id="oChips" role="group" aria-label="Filtrar pedidos por etapa"></div>
+      <div class="tblwrap">
+        <table>
+          <thead><tr><th>Pedido</th><th>Cliente</th><th>Item</th><th>Máquina</th><th>Status</th><th>Valor</th><th></th></tr></thead>
+          <tbody id="oTable"></tbody>
+        </table>
+      </div>
+      <div class="total"><span>Total filtrado <span id="oCount" class="mono"></span></span><b id="oTotal">R$ 0,00</b></div>
+      <p class="note">“✓ Pago” registra a data do pagamento; “✓ Entregue” fecha o pedido. Use ↺ para corrigir etapa e × para excluir. Pedidos cancelados ficam fora de todos os totais.</p>
+    </div>
+  </section>
+
+  <footer>
+    <div><b>PRECIFICA3D</b><br>Calculadora de precificação para impressão 3D — valores de referência, ajuste com seus números reais.</div>
+    <div class="mono" style="text-align:right">custo · margem · risco<br>sem cadastro, roda offline</div>
+  </footer>
+  </div>
+</main>
+
+<script src="js/core.js"></script>
+<script src="js/pedidos.js"></script>
+</body>
+</html>

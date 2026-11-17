@@ -9,7 +9,7 @@
     $('#sumQuotes').textContent=nf(P.quotes.length)+(P.quotes.length===1?' item':' itens');
     $('#sumLot').textContent=P.getLot()?nf(P.getLot())+' un.':'nenhum';
     $('#sumInv').textContent=nf(P.INV.printers.length)+' · '+nf(P.INV.buys.length);
-    $('#sumApp').textContent='v'+P.exportData().version;
+    $('#sumPedidos').textContent=nf(P.orders.length)+(P.orders.length===1?' pedido':' pedidos');
     let at='—';
     try{const t=localStorage.getItem('p3d_savedAt');
       if(t)at=new Date(t).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});}catch(e){}
@@ -44,7 +44,7 @@
     r.onload=()=>{
       try{
         const res=P.importData(JSON.parse(String(r.result)));
-        say('Backup restaurado: '+nf(res.mats)+' materiais, '+nf(res.quotes)+' orçamentos, '+nf(res.printers)+' impressoras, '+nf(res.buys)+' lançamentos'+
+        say('Backup restaurado: '+nf(res.mats)+' materiais, '+nf(res.quotes)+' orçamentos, '+nf(res.printers)+' impressoras, '+nf(res.buys)+' lançamentos, '+nf(res.orders)+' pedidos'+
           (res.lote?', lote travado de '+nf(res.lote)+' un.':'')+'. Recarregando…',true);
         setTimeout(()=>location.reload(),900);
       }catch(err){say('Não deu: '+(err&&err.message?err.message:'arquivo inválido')+'. Nada foi alterado.',false);}

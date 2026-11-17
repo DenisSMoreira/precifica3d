@@ -58,10 +58,16 @@
       if(Array.isArray(iv.buys))iv.buys.forEach(b=>{if(b&&typeof b.desc==='string')INV.buys.push(b);});
     }}catch(e){}
 
+  /* ---- pedidos: fluxo orçamento → pagamento → entrega ---- */
+  const orders=[]; // {status:'aguarda'|'pago'|'entregue'|'cancelado'}
+  try{const o=JSON.parse(localStorage.getItem('p3d_orders')||'[]');
+    if(Array.isArray(o))o.forEach(x=>{if(x&&typeof x.id==='string'&&typeof x.cliente==='string')orders.push(x);});}catch(e){}
+
   const savedAt=()=>{try{localStorage.setItem('p3d_savedAt',new Date().toISOString());}catch(e){}};
   const saveSettings=()=>{try{localStorage.setItem('p3d_settings',JSON.stringify(S));localStorage.setItem('p3d_lote',String(lotSel));savedAt();}catch(e){}};
   const store=()=>{try{localStorage.setItem('p3d_mats',JSON.stringify(MATERIALS.map(m=>({n:m.n,kg:m.kg}))));localStorage.setItem('p3d_quotes',JSON.stringify(quotes));savedAt();}catch(e){}};
   const invStore=()=>{try{localStorage.setItem('p3d_inv',JSON.stringify(INV));savedAt();}catch(e){}};
+  const ordersStore=()=>{try{localStorage.setItem('p3d_orders',JSON.stringify(orders));savedAt();}catch(e){}};
 
   /* ---- modelo de custo/preço (fonte única: peça unitária e lotes) ---- */
   function model(lot){
@@ -130,16 +136,17 @@
 
   /* ---- backup exportável: um JSON versionado com tudo + restauração + reset ---- */
   function exportData(){ // snapshot profundo: o backup nunca referencia o estado vivo
-    return {app:'precifica3d',version:2,exportedAt:new Date().toISOString(),
+    return {app:'precifica3d',version:3,exportedAt:new Date().toISOString(),
       settings:JSON.parse(JSON.stringify(S)),lote:lotSel,
       materials:MATERIALS.map(m=>({...m})),
       quotes:quotes.map(q=>({...q})),
-      inv:{printers:INV.printers.map(p=>({...p})),buys:INV.buys.map(b=>({...b}))}};
+      inv:{printers:INV.printers.map(p=>({...p})),buys:INV.buys.map(b=>({...b}))},
+      orders:orders.map(o=>({...o}))};
   }
   function importData(obj){
     if(!obj||typeof obj!=='object'||Array.isArray(obj)||obj.app!=='precifica3d')throw new Error('O arquivo não é um backup do Precifica3D.');
     const ver=+obj.version;
-    if(ver!==2&&ver!==1)throw new Error('Versão de backup não suportada ('+esc(obj.version)+').'); // v1 = antes da aba Investimento
+    if(ver!==3&&ver!==2&&ver!==1)throw new Error('Versão de backup não suportada ('+esc(obj.version)+').'); // v1 pré-Investimento · v2 pré-Pedidos
     try{localStorage.setItem('p3d_prev',JSON.stringify(exportData()));}catch(e){} // segurança: estado atual nunca é perdido
     const st=obj.settings; // sanitização igual à da carga inicial
     if(st&&typeof st==='object'&&!Array.isArray(st))Object.keys(DEF).forEach(k=>{const v=st[k];
@@ -156,15 +163,17 @@
     const iv=obj.inv&&typeof obj.inv==='object'?obj.inv:{};
     if(Array.isArray(iv.printers))iv.printers.forEach(p=>{if(p&&typeof p.nome==='string'&&isFinite(p.preco)&&p.preco>=0){INV.printers.push(p);nP++;}});
     if(Array.isArray(iv.buys))iv.buys.forEach(b=>{if(b&&typeof b.desc==='string'&&isFinite(b.total)&&isFinite(b.qtd)){INV.buys.push(b);nB++;}});
+    let nO=0;orders.length=0;
+    if(Array.isArray(obj.orders))obj.orders.forEach(o=>{if(o&&typeof o.id==='string'&&typeof o.cliente==='string'&&isFinite(o.total)){orders.push(o);nO++;}});
     const m=MATERIALS.find(x=>x.n===S.mat);if(m)S.precoKg=m.kg;
-    saveSettings();store();invStore();
-    return {mats:nMats,quotes:nQ,printers:nP,buys:nB,lote:lotSel};
+    saveSettings();store();invStore();ordersStore();
+    return {mats:nMats,quotes:nQ,printers:nP,buys:nB,orders:nO,lote:lotSel};
   }
-  function clearAll(){quotes.length=0;Object.keys(DEF).forEach(k=>{S[k]=DEF[k];});MATERIALS.forEach((m,i)=>Object.assign(m,MAT_DEF[i]));lotSel=0;INV.printers.length=0;INV.buys.length=0;
-    try{['p3d_settings','p3d_lote','p3d_mats','p3d_quotes','p3d_inv','p3d_prev','p3d_savedAt'].forEach(k=>localStorage.removeItem(k));}catch(e){}}
+  function clearAll(){quotes.length=0;Object.keys(DEF).forEach(k=>{S[k]=DEF[k];});MATERIALS.forEach((m,i)=>Object.assign(m,MAT_DEF[i]));lotSel=0;INV.printers.length=0;INV.buys.length=0;orders.length=0;
+    try{['p3d_settings','p3d_lote','p3d_mats','p3d_quotes','p3d_inv','p3d_orders','p3d_prev','p3d_savedAt'].forEach(k=>localStorage.removeItem(k));}catch(e){}}
 
-  window.P3D={$,$$,brl,nf,esc,hhmm,round90,MATERIALS,MAT_DEF,PRESETS,DEF,LOTES,S,quotes,INV,
-    store,invStore,saveSettings,model,sync,syncAll,paintRanges,bindFields,setMat,getLot:()=>lotSel,setLot,addQuote,drawChip,reveals,
+  window.P3D={$,$$,brl,nf,esc,hhmm,round90,MATERIALS,MAT_DEF,PRESETS,DEF,LOTES,S,quotes,INV,orders,
+    store,invStore,ordersStore,saveSettings,model,sync,syncAll,paintRanges,bindFields,setMat,getLot:()=>lotSel,setLot,addQuote,drawChip,reveals,
     exportData,importData,clearAll};
 
   drawChip();
