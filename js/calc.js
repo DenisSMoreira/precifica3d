@@ -32,6 +32,18 @@
     }
   }
 
+  /* ---- combo "Como medir o lucro?" — ao trocar o modo o valor se converte sozinho
+     (markup 140% sobre o custo ≡ margem 58% sobre o preço; margem 40% ≡ markup 67%) ---- */
+  $('#i-margemModo').addEventListener('change',()=>{
+    const novo=$('#i-margemModo').value;
+    if(novo!==S.margemModo){
+      const m=+S.margem||0;
+      S.margem=novo==='margem'?Math.round(m/(1+m/100)):Math.round(100*Math.min(m,90)/(100-Math.min(m,90)));
+      S.margemModo=novo;P.saveSettings();P.sync('margem');
+    }
+    calc();
+  });
+
   /* ---- ticker de materiais ---- */
   function drawMarq(){
     const segs=MATERIALS.map(m=>'<span><em>'+esc(m.n)+'</em> '+m.bico+'° · R$ '+nf(m.kg,2)+'/kg · '+esc(m.u)+'</span>');
@@ -79,6 +91,13 @@
     else if(S.falha>30){w.hidden=false;w.innerHTML='<b>Taxa de falha alta ('+nf(S.falha,0)+'%):</b> reduzir insucesso costuma render mais do que subir preço.';}
     else if(m.h>0&&(lucro/m.h)<5){w.hidden=false;w.innerHTML='<b>Rendimento baixo:</b> '+brl(lucro/m.h)+' por hora de máquina. Considere fatiar em múltiplas peças por mesa ou aumentar a margem.';}
     else w.hidden=true;
+
+    const mn=$('#margemNote');
+    $$('[data-k="margem"]').forEach(i=>{if(i.type==='range'){const mx=S.margemModo==='margem'?90:400;if(+i.max!==mx){i.max=mx;P.paintRanges();}}});
+    if(S.margemModo==='margem'){const mg=Math.min(Math.max(0,S.margem),90);
+      mn.textContent='Margem de '+nf(mg)+'% SOBRE O PREÇO: preço = (custo + taxas fixas) ÷ (1 − taxas − margem) — sobram R$ '+nf(mg)+' a cada R$ 100 vendidos, o jeito das calculadoras simples (Negócio Impresso e afins). Em markup sobre o custo isso equivale a '+nf(Math.round(100*mg/(100-mg)))+'%.';}
+    else {const mk=Math.max(0,S.margem);
+      mn.textContent='Markup de '+nf(mk)+'% SOBRE O CUSTO: preço = custo × '+nf(1+mk/100,2)+' antes de imposto e taxas de plataforma. Isso equivale a '+nf(mk/(1+mk/100),1)+'% de margem sobre o preço de venda.';}
 
     const cn=$('#canalNote');
     if(S.canal==='shopee'){const f=P.canalFees('shopee',preco);

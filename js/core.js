@@ -25,16 +25,16 @@
   ];
   const MAT_DEF=MATERIALS.map(m=>({...m})); // defaults p/ reset e contagem de edições
   const PRESETS={
-    chaveiro:{nome:'Chaveiro personalizado',peso:12,horas:0.5,mins:10,mat:'PLA',prepMin:8,posMin:5,emb:2,falha:10,margem:260,potencia:130},
-    vaso:{nome:'Vaso espiral 15cm',peso:128,horas:7,mins:20,mat:'PLA Seda',prepMin:15,posMin:12,emb:4,falha:14,margem:140},
-    engren:{nome:'Engrenagem PETG M2',peso:46,horas:1,mins:45,mat:'PETG',prepMin:25,posMin:10,emb:3,falha:18,margem:200,potencia:170},
-    drone:{nome:'Frame de drone 5"',peso:88,horas:5,mins:10,mat:'PETG Fibra',prepMin:40,posMin:20,emb:6,falha:20,margem:180,potencia:180,maquina:4200},
-    placa:{nome:'Placa de nome',peso:34,horas:1,mins:25,mat:'PLA Fosco',prepMin:18,posMin:8,emb:3.5,falha:12,margem:220},
-    mini:{nome:'Miniatura resina 32mm',peso:26,horas:2,mins:40,mat:'Resina 405nm',prepMin:30,posMin:35,emb:5,falha:22,margem:240,maquina:2900,manut:2.5,potencia:90}
+    chaveiro:{nome:'Chaveiro personalizado',peso:12,horas:0.5,mins:10,mat:'PLA',prepMin:8,posMin:5,emb:2,falha:10,margem:260,potencia:130,margemModo:'markup'},
+    vaso:{nome:'Vaso espiral 15cm',peso:128,horas:7,mins:20,mat:'PLA Seda',prepMin:15,posMin:12,emb:4,falha:14,margem:140,margemModo:'markup'},
+    engren:{nome:'Engrenagem PETG M2',peso:46,horas:1,mins:45,mat:'PETG',prepMin:25,posMin:10,emb:3,falha:18,margem:200,potencia:170,margemModo:'markup'},
+    drone:{nome:'Frame de drone 5"',peso:88,horas:5,mins:10,mat:'PETG Fibra',prepMin:40,posMin:20,emb:6,falha:20,margem:180,potencia:180,maquina:4200,margemModo:'markup'},
+    placa:{nome:'Placa de nome',peso:34,horas:1,mins:25,mat:'PLA Fosco',prepMin:18,posMin:8,emb:3.5,falha:12,margem:220,margemModo:'markup'},
+    mini:{nome:'Miniatura resina 32mm',peso:26,horas:2,mins:40,mat:'Resina 405nm',prepMin:30,posMin:35,emb:5,falha:22,margem:240,maquina:2900,manut:2.5,potencia:90,margemModo:'markup'}
   };
-  const DEF={nome:'Vaso espiral 15cm',peso:128,horas:7,mins:20,mat:'PLA Seda',precoKg:74.9,rolo:1000,desperdicio:12,falha:12,
+  const DEF={nome:'Vaso espiral 15cm',peso:128,horas:7,mins:20,mat:'PLA Seda',precoKg:74.9,rolo:1000,desperdicio:0,falha:10,
     maquina:2400,vida:4000,potencia:145,tarifa:0.98,manut:0.3,prepMin:10,posMin:5,horaTrab:20,emb:3.5,extra:0,fixos:480,pecasMes:90,
-    margem:140,imposto:6,taxa:0,taxaFixa:0,canal:'direto',meta:4000,ratear:true,arredonda:true,mostrarMin:false};
+    margem:40,margemModo:'margem',imposto:6,taxa:0,taxaFixa:0,canal:'direto',meta:4000,ratear:true,arredonda:true,mostrarMin:false};
   const LOTES=[1,5,20,100];
 
   /* ---- estado persistido entre páginas ---- */
@@ -74,6 +74,12 @@
   try{if(localStorage.getItem('p3d_settings')&&!localStorage.getItem('p3d_mig2')){
     S.manut=0.3;S.horaTrab=20;S.prepMin=10;S.posMin=5;S.canal='direto';S.taxa=0;S.taxaFixa=0;
     localStorage.setItem('p3d_mig2','1');saveSettings();}}catch(e){}
+  /* migração única 2 (nov/2026): peças estavam caras demais — margem agora é % sobre o preço de venda
+     (40% de margem ≡ markup de 66,7% sobre o custo, antes eram 140% de markup ≡ 58% de margem),
+     desperdício sai do padrão (o peso do fatiador já inclui suporte/purga) e falha cai para 10% */
+  try{if(localStorage.getItem('p3d_settings')&&!localStorage.getItem('p3d_mig3')){
+    S.margemModo='margem';S.margem=40;S.desperdicio=0;S.falha=10;
+    localStorage.setItem('p3d_mig3','1');saveSettings();}}catch(e){}
   const store=()=>{try{localStorage.setItem('p3d_mats',JSON.stringify(MATERIALS.map(m=>({n:m.n,kg:m.kg}))));localStorage.setItem('p3d_quotes',JSON.stringify(quotes));savedAt();}catch(e){}};
   const invStore=()=>{try{localStorage.setItem('p3d_inv',JSON.stringify(INV));savedAt();}catch(e){}};
   const ordersStore=()=>{try{localStorage.setItem('p3d_orders',JSON.stringify(orders));savedAt();}catch(e){}};
@@ -96,7 +102,11 @@
     const fx=Math.max(0,+S.taxaFixa||0); // taxa fixa do marketplace por item vendido
     const den=Math.max(0.02,1-(S.imposto+S.taxa)/100);
     const min=(custo+fx)/den,max=(custo+fx)*3.2/den;
-    const bruto=(custo+fx)*(1+S.margem/100)/den;
+    /* margem tem dois modos: 'markup' = % SOBRE O CUSTO (preço = custo×(1+m));
+       'margem' = % SOBRE O PREÇO DE VENDA (preço = custo÷(1−m), jeito dos calculadoras simples tipo Negócio Impresso) */
+    const mm=S.margemModo==='margem';
+    const mg=Math.min(Math.max(0,S.margem),mm?90:800);
+    const bruto=mm?(custo+fx)/Math.max(0.05,den-mg/100):(custo+fx)*(1+mg/100)/den;
     const preco=S.arredonda?Math.max(round90(bruto),min):bruto;
     const impV=preco*S.imposto/100,taxV=preco*S.taxa/100;
     const lucro=preco-custo-impV-taxV-fx;

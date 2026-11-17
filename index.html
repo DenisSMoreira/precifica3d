@@ -88,16 +88,16 @@
               <input type="range" aria-labelledby="lbl-mins" data-k="mins" min="0" max="59" step="1" value="20">
             </div>
           </div>
-          <div class="sub">Desperdício de suporte, brim e briga de primeira camada</div>
+          <div class="sub">Suportes e purga já vêm no peso do fatiador — use este campo só para perda extra (calibrações, bobina úmida)</div>
           <div class="grid">
             <div class="field">
               <div class="f-top"><label id="lbl-desperdicio" for="i-desperdicio">Sobra / perda de material</label><span class="u">%</span></div>
-              <input type="number" id="i-desperdicio" data-k="desperdicio" min="0" max="80" step="1" value="12">
-              <input type="range" aria-labelledby="lbl-desperdicio" data-k="desperdicio" min="0" max="50" step="1" value="12">
+              <input type="number" id="i-desperdicio" data-k="desperdicio" min="0" max="80" step="1" value="0">
+              <input type="range" aria-labelledby="lbl-desperdicio" data-k="desperdicio" min="0" max="50" step="1" value="0">
             </div>
             <div class="field">
               <div class="f-top"><label id="lbl-falha" for="i-falha">Taxa de impressão falha</label><span class="u">%</span></div>
-              <input type="number" id="i-falha" data-k="falha" min="0" max="90" step="1" value="12">
+              <input type="number" id="i-falha" data-k="falha" min="0" max="90" step="1" value="10">
               <input type="range" aria-labelledby="lbl-falha" data-k="falha" min="0" max="50" step="1" value="12">
             </div>
           </div>
@@ -215,9 +215,16 @@
               </select>
             </div>
             <div class="field">
-              <div class="f-top"><label id="lbl-margem" for="i-margem">Margem de lucro sobre o custo</label><span class="u">%</span></div>
-              <input type="number" id="i-margem" data-k="margem" min="0" max="800" step="5" value="140">
-              <input type="range" aria-labelledby="lbl-margem" data-k="margem" min="0" max="400" step="5" value="140">
+              <div class="f-top"><label id="lbl-margemModo" for="i-margemModo">Como medir o lucro</label><span class="u">combo</span></div>
+              <select id="i-margemModo" data-k="margemModo">
+                <option value="margem">% sobre o preço de venda (margem)</option>
+                <option value="markup">% sobre o custo (markup)</option>
+              </select>
+            </div>
+            <div class="field">
+              <div class="f-top"><label id="lbl-margem" for="i-margem">Lucro desejado</label><span class="u">%</span></div>
+              <input type="number" id="i-margem" data-k="margem" min="0" max="800" step="5" value="40">
+              <input type="range" aria-labelledby="lbl-margem" data-k="margem" min="0" max="90" step="5" value="40">
             </div>
             <div class="field">
               <div class="f-top"><label id="lbl-imposto" for="i-imposto">Imposto (MEI / Simples)</label><span class="u">%</span></div>
@@ -234,6 +241,7 @@
               <input type="number" id="i-taxaFixa" data-k="taxaFixa" min="0" max="100" step="0.5" value="0">
             </div>
           </div>
+          <p class="note" id="margemNote" style="margin:12px 0 0"></p>
           <p class="note" id="canalNote" style="margin:12px 0 0">Venda direta no Pix: só o seu imposto conta. Nos marketplaces a comissão vem com taxa fixa por item — escolha o canal acima e os campos se ajustam sozinhos.</p>
           <div style="display:flex;gap:22px;flex-wrap:wrap;margin-top:16px">
             <label class="switch"><input type="checkbox" data-ka="arredonda" checked> Arredondar para R$ x,90</label>
