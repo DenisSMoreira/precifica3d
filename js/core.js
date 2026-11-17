@@ -33,8 +33,8 @@
     mini:{nome:'Miniatura resina 32mm',peso:26,horas:2,mins:40,mat:'Resina 405nm',prepMin:30,posMin:35,emb:5,falha:22,margem:240,maquina:2900,manut:2.5,potencia:90}
   };
   const DEF={nome:'Vaso espiral 15cm',peso:128,horas:7,mins:20,mat:'PLA Seda',precoKg:74.9,rolo:1000,desperdicio:12,falha:12,
-    maquina:2400,vida:4000,potencia:145,tarifa:0.98,manut:1.2,prepMin:15,posMin:12,horaTrab:40,emb:3.5,extra:0,fixos:480,pecasMes:90,
-    margem:140,imposto:6,taxa:14,meta:4000,ratear:true,arredonda:true,mostrarMin:false};
+    maquina:2400,vida:4000,potencia:145,tarifa:0.98,manut:0.3,prepMin:10,posMin:5,horaTrab:20,emb:3.5,extra:0,fixos:480,pecasMes:90,
+    margem:140,imposto:6,taxa:0,taxaFixa:0,canal:'direto',meta:4000,ratear:true,arredonda:true,mostrarMin:false};
   const LOTES=[1,5,20,100];
 
   /* ---- estado persistido entre páginas ---- */
@@ -69,6 +69,11 @@
 
   const savedAt=()=>{try{localStorage.setItem('p3d_savedAt',new Date().toISOString());}catch(e){}};
   const saveSettings=()=>{try{localStorage.setItem('p3d_settings',JSON.stringify(S));localStorage.setItem('p3d_lote',String(lotSel));savedAt();}catch(e){}};
+  /* migração única (nov/2026): padrões fixos pedidos — reserva de manutenção R$0,30/h, minha hora R$20,
+     trabalho 5min/peça + 10min/lote, e canal de venda direto (taxa de marketplace começa em 0) */
+  try{if(localStorage.getItem('p3d_settings')&&!localStorage.getItem('p3d_mig2')){
+    S.manut=0.3;S.horaTrab=20;S.prepMin=10;S.posMin=5;S.canal='direto';S.taxa=0;S.taxaFixa=0;
+    localStorage.setItem('p3d_mig2','1');saveSettings();}}catch(e){}
   const store=()=>{try{localStorage.setItem('p3d_mats',JSON.stringify(MATERIALS.map(m=>({n:m.n,kg:m.kg}))));localStorage.setItem('p3d_quotes',JSON.stringify(quotes));savedAt();}catch(e){}};
   const invStore=()=>{try{localStorage.setItem('p3d_inv',JSON.stringify(INV));savedAt();}catch(e){}};
   const ordersStore=()=>{try{localStorage.setItem('p3d_orders',JSON.stringify(orders));savedAt();}catch(e){}};
@@ -88,13 +93,24 @@
     const varr=material+energia+maq+mo+extras;
     const risco=S.falha<95?varr/(1-S.falha/100)-varr:varr*9;
     const custo=varr+risco+fixoSolo;
+    const fx=Math.max(0,+S.taxaFixa||0); // taxa fixa do marketplace por item vendido
     const den=Math.max(0.02,1-(S.imposto+S.taxa)/100);
-    const min=custo/den,max=custo*3.2/den;
-    const bruto=custo*(1+S.margem/100)/den;
+    const min=(custo+fx)/den,max=(custo+fx)*3.2/den;
+    const bruto=(custo+fx)*(1+S.margem/100)/den;
     const preco=S.arredonda?Math.max(round90(bruto),min):bruto;
     const impV=preco*S.imposto/100,taxV=preco*S.taxa/100;
-    const lucro=preco-custo-impV-taxV;
-    return{lot,h,pesoBruto,material,energia,maq,mo,extras,fixoSolo,varr,risco,custo,preco,impV,taxV,lucro,min,max};
+    const lucro=preco-custo-impV-taxV-fx;
+    return{lot,h,pesoBruto,material,energia,maq,mo,extras,fixoSolo,varr,risco,custo,fx,preco,impV,taxV,lucro,min,max};
+  }
+
+  /* taxas de intermediação por canal — valores públicos conferidos em out/nov-2026:
+     Shopee: 20% + R$4,50/item até R$79,99 · 14% + R$16 (R$80–99,99) · 14% + R$20 (R$100–199,99) · 14% + R$26 (≥R$200)
+     Mercado Livre Clássico: 10–14% conforme categoria (artes/papelaria ≈ 11,5%) — usamos 12%
+     (frete dos Envios e campanhas ficam fora; ajuste nos campos se seu anúncio for diferente) */
+  function canalFees(canal,preco){
+    if(canal==='shopee')return preco<80?{pct:20,fix:4.5}:preco<100?{pct:14,fix:16}:preco<200?{pct:14,fix:20}:{pct:14,fix:26};
+    if(canal==='ml')return{pct:12,fix:0};
+    return null;
   }
 
   /* ---- bindings de inputs presentes na página atual ---- */
@@ -182,7 +198,7 @@
     try{['p3d_settings','p3d_lote','p3d_mats','p3d_quotes','p3d_inv','p3d_orders','p3d_prev','p3d_savedAt'].forEach(k=>localStorage.removeItem(k));}catch(e){}}
 
   window.P3D={$,$$,brl,nf,esc,hhmm,round90,MATERIALS,MAT_DEF,PRESETS,DEF,LOTES,S,quotes,INV,orders,
-    store,invStore,ordersStore,saveSettings,model,sync,syncAll,paintRanges,bindFields,setMat,getLot:()=>lotSel,setLot,addQuote,drawChip,reveals,
+    store,invStore,ordersStore,saveSettings,model,sync,syncAll,paintRanges,bindFields,setMat,getLot:()=>lotSel,setLot,addQuote,drawChip,reveals,canalFees,
     exportData,importData,clearAll};
 
   drawChip();

@@ -150,8 +150,8 @@
             </div>
             <div class="field">
               <div class="f-top"><label id="lbl-manut" for="i-manut">Manutenção (bico, cinta, mesa)</label><span class="u">R$/h</span></div>
-              <input type="number" id="i-manut" data-k="manut" min="0" max="30" step="0.1" value="1.20">
-              <input type="range" aria-labelledby="lbl-manut" data-k="manut" min="0" max="10" step="0.1" value="1.2">
+              <input type="number" id="i-manut" data-k="manut" min="0" max="30" step="0.1" value="0.30">
+              <input type="range" aria-labelledby="lbl-manut" data-k="manut" min="0" max="10" step="0.1" value="0.3">
             </div>
           </div>
           <p class="note" id="machineNote">Custo de máquina: —</p>
@@ -163,19 +163,19 @@
         <div class="p-body">
           <div class="grid">
             <div class="field">
-              <div class="f-top"><label id="lbl-prepMin" for="i-prepMin">Preparo do arquivo</label><span class="u">min</span></div>
-              <input type="number" id="i-prepMin" data-k="prepMin" min="0" max="240" step="1" value="15">
-              <input type="range" aria-labelledby="lbl-prepMin" data-k="prepMin" min="0" max="90" step="1" value="15">
+              <div class="f-top"><label id="lbl-prepMin" for="i-prepMin">Trabalho no lote (preparo)</label><span class="u">min/lote</span></div>
+              <input type="number" id="i-prepMin" data-k="prepMin" min="0" max="240" step="1" value="10">
+              <input type="range" aria-labelledby="lbl-prepMin" data-k="prepMin" min="0" max="90" step="1" value="10">
             </div>
             <div class="field">
-              <div class="f-top"><label id="lbl-posMin" for="i-posMin">Pós-processamento</label><span class="u">min</span></div>
-              <input type="number" id="i-posMin" data-k="posMin" min="0" max="240" step="1" value="12">
-              <input type="range" aria-labelledby="lbl-posMin" data-k="posMin" min="0" max="90" step="1" value="12">
+              <div class="f-top"><label id="lbl-posMin" for="i-posMin">Trabalho em cada peça (pós)</label><span class="u">min/peça</span></div>
+              <input type="number" id="i-posMin" data-k="posMin" min="0" max="240" step="1" value="5">
+              <input type="range" aria-labelledby="lbl-posMin" data-k="posMin" min="0" max="90" step="1" value="5">
             </div>
             <div class="field">
               <div class="f-top"><label id="lbl-horaTrab" for="i-horaTrab">Valor da sua hora</label><span class="u">R$</span></div>
-              <input type="number" id="i-horaTrab" data-k="horaTrab" min="0" max="300" step="1" value="40">
-              <input type="range" aria-labelledby="lbl-horaTrab" data-k="horaTrab" min="10" max="150" step="1" value="40">
+              <input type="number" id="i-horaTrab" data-k="horaTrab" min="0" max="300" step="1" value="20">
+              <input type="range" aria-labelledby="lbl-horaTrab" data-k="horaTrab" min="10" max="150" step="1" value="20">
             </div>
             <div class="field">
               <div class="f-top"><label id="lbl-emb" for="i-emb">Embalagem e etiqueta</label><span class="u">R$</span></div>
@@ -203,9 +203,17 @@
       </div>
 
       <div class="panel">
-        <div class="p-head"><span class="num">05</span><h3>Como você vende</h3><span class="hint">margem, imposto e taxa de plataforma</span></div>
+        <div class="p-head"><span class="num">05</span><h3>Como você vende</h3><span class="hint">canal, margem, imposto e taxa de plataforma</span></div>
         <div class="p-body">
           <div class="grid">
+            <div class="field">
+              <div class="f-top"><label id="lbl-canal" for="i-canal">Como vai vender?</label><span class="u">combo</span></div>
+              <select id="i-canal" data-k="canal">
+                <option value="direto">Venda direta no Pix</option>
+                <option value="shopee">Shopee (comissão por faixa + taxa fixa)</option>
+                <option value="ml">Mercado Livre — anúncio Clássico</option>
+              </select>
+            </div>
             <div class="field">
               <div class="f-top"><label id="lbl-margem" for="i-margem">Margem de lucro sobre o custo</label><span class="u">%</span></div>
               <input type="number" id="i-margem" data-k="margem" min="0" max="800" step="5" value="140">
@@ -218,10 +226,15 @@
             </div>
             <div class="field">
               <div class="f-top"><label id="lbl-taxa" for="i-taxa">Taxa do marketplace / cartão</label><span class="u">%</span></div>
-              <input type="number" id="i-taxa" data-k="taxa" min="0" max="40" step="0.5" value="14">
-              <input type="range" aria-labelledby="lbl-taxa" data-k="taxa" min="0" max="30" step="0.5" value="14">
+              <input type="number" id="i-taxa" data-k="taxa" min="0" max="40" step="0.5" value="0">
+              <input type="range" aria-labelledby="lbl-taxa" data-k="taxa" min="0" max="30" step="0.5" value="0">
+            </div>
+            <div class="field">
+              <div class="f-top"><label id="lbl-taxaFixa" for="i-taxaFixa">Taxa fixa por item vendido</label><span class="u">R$</span></div>
+              <input type="number" id="i-taxaFixa" data-k="taxaFixa" min="0" max="100" step="0.5" value="0">
             </div>
           </div>
+          <p class="note" id="canalNote" style="margin:12px 0 0">Venda direta no Pix: só o seu imposto conta. Nos marketplaces a comissão vem com taxa fixa por item — escolha o canal acima e os campos se ajustam sozinhos.</p>
           <div style="display:flex;gap:22px;flex-wrap:wrap;margin-top:16px">
             <label class="switch"><input type="checkbox" data-ka="arredonda" checked> Arredondar para R$ x,90</label>
             <label class="switch"><input type="checkbox" data-ka="mostrarMin"> Alertar se ficar abaixo do preço mínimo</label>

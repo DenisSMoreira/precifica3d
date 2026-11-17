@@ -13,9 +13,24 @@
   /* ---- inputs (binding compartilhado do núcleo) ---- */
   P.bindFields(k=>{
     if(k==='precoKg'){const m=MATERIALS.find(x=>x.n===S.mat);if(m){m.kg=S.precoKg;P.store();drawMarq();}}
+    if((k==='taxa'||k==='taxaFixa')&&S.canal!=='direto'){S.canal='direto';P.sync('canal');P.saveSettings();} // mexeu à mão → sai do preset do canal
     calc();
   });
   P.syncAll(); // valores persistidos mandam nos campos, não o valor inicial do HTML
+
+  /* ---- combo "Como vai vender?" — preenche taxa % e taxa fixa com os valores do canal.
+     Na Shopee a faixa depende do preço, então recalcula até estabilizar. ---- */
+  $('#i-canal').addEventListener('change',()=>{S.canal=$('#i-canal').value;
+    if(S.canal==='direto'){S.taxa=0;S.taxaFixa=0;P.sync('taxa');P.sync('taxaFixa');} // venda direta: zero intermediação
+    P.saveSettings();calc();});
+  function applyCanal(){
+    if(S.canal==='direto')return;
+    for(let i=0;i<3;i++){
+      const f=P.canalFees(S.canal,model(1).preco);if(!f)return;
+      if(S.taxa===f.pct&&S.taxaFixa===f.fix)return;
+      S.taxa=f.pct;S.taxaFixa=f.fix;P.sync('taxa');P.sync('taxaFixa');P.saveSettings();
+    }
+  }
 
   /* ---- ticker de materiais ---- */
   function drawMarq(){
@@ -27,6 +42,7 @@
   /* ---- display ---- */
   let last=null,srT;
   function calc(){
+    applyCanal();
     const m=model(1);last=m;
     const {preco,custo,lucro}=m;
     const mliq=preco>0?lucro/preco*100:0;
@@ -53,7 +69,7 @@
 
     const parts=[['Filamento',m.material,'var(--amber)'],['Energia',m.energia,'var(--hot)'],['Máquina',m.maq,'var(--rust)'],
       ['Mão de obra',m.mo,'var(--teal)'],['Embalagem/extras',m.extras,'var(--olive)'],['Custos fixos',m.fixoSolo,'var(--slate)'],
-      ['Risco/falha',m.risco,'var(--plum)'],['Imposto',m.impV,'#5d4a3a'],['Taxa plataforma',m.taxV,'#3f5f6e']];
+      ['Risco/falha',m.risco,'var(--plum)'],['Imposto',m.impV,'#5d4a3a'],['Taxa plataforma',m.taxV,'#3f5f6e'],['Taxa fixa do item',m.fx,'#46586a']];
     const tot=parts.reduce((a,pt)=>a+pt[1],0)||1;
     $('#stack').innerHTML=parts.map(pt=>'<i style="width:'+(pt[1]/tot*100)+'%;background:'+pt[2]+'" title="'+pt[0]+'"></i>').join('');
     $('#legend').innerHTML=parts.filter(pt=>pt[1]>0.0001).map(pt=>'<span><i style="background:'+pt[2]+'"></i>'+pt[0]+' <b>'+brl(pt[1])+'</b></span>').join('');
@@ -63,6 +79,13 @@
     else if(S.falha>30){w.hidden=false;w.innerHTML='<b>Taxa de falha alta ('+nf(S.falha,0)+'%):</b> reduzir insucesso costuma render mais do que subir preço.';}
     else if(m.h>0&&(lucro/m.h)<5){w.hidden=false;w.innerHTML='<b>Rendimento baixo:</b> '+brl(lucro/m.h)+' por hora de máquina. Considere fatiar em múltiplas peças por mesa ou aumentar a margem.';}
     else w.hidden=true;
+
+    const cn=$('#canalNote');
+    if(S.canal==='shopee'){const f=P.canalFees('shopee',preco);
+      cn.textContent='Shopee — faixa deste preço ('+brl(preco)+'): comissão '+nf(f.pct)+'% + R$ '+nf(f.fix,2)+' por item. A tabela muda a cada faixa de preço (20%+R$4,50 até R$79,99 · 14%+R$16/20/26 acima) e a taxa fixa devora item barato. Valores públicos de out/2026 — se seu anúncio é diferente, ajuste os campos.';}
+    else if(S.canal==='ml'){
+      cn.textContent='Mercado Livre Clássico: ~12% de comissão (a faixa oficial é 10–14% por categoria; artes/papelaria ≈ 11,5%). O Premium soma uns 5 pontos (paga o 12x sem juros) e o custo dos Envios corre à parte — ajuste se necessário.';}
+    else cn.textContent='Venda direta no Pix: nenhuma comissão — só o seu imposto. Vendendo por marketplace, escolha o canal acima para puxar as taxas reais de intermediação.';
 
     clearTimeout(srT);srT=setTimeout(()=>{$('#srOut').textContent='Preço sugerido '+brl(preco)+', custo '+brl(custo)+', lucro '+brl(lucro)+'.';},500);
   }
