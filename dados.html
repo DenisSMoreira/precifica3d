@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dados e backup — Precifica 3D</title>
+<meta name="description" content="Exporte e restaure suas configurações do Precifica 3D (calculadora, materiais, lotes e orçamentos) em um arquivo .json — leve seus números para outro navegador ou máquina.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<script>document.documentElement.classList.remove('no-js')</script>
+</head>
+<body>
+<div class="grain"></div>
+
+<header class="top">
+  <div class="top-in">
+    <a class="brand" href="index.html"><span class="mark"><i></i><i></i><i></i><i></i></span>PRECIFICA<span>3D</span></a>
+    <nav class="nav">
+      <a href="index.html">Calculadora</a>
+      <a href="materiais.html">Materiais</a>
+      <a href="lotes.html">Lotes &amp; Meta</a>
+      <a href="orcamentos.html">Orçamentos</a>
+      <a href="guia.html">Guia</a>
+      <a href="dados.html" aria-current="page">Dados</a>
+      <a href="investimento.html">Investimento</a>
+    </nav>
+    <div class="top-price">Peça atual <b id="chipPrice">R$ 0,00</b></div>
+  </div>
+</header>
+
+<main id="top">
+  <div class="wrap">
+
+  <!-- DADOS -->
+  <section id="dados" class="blk">
+    <div class="head rv">
+      <div>
+        <div class="kick">09 / Backup e dados</div>
+        <h1>Seus números já ficam salvos — agora dá para levá-los junto</h1>
+      </div>
+      <p>Tudo é gravado automaticamente neste navegador. O backup .json leva calculadora, materiais, lotes, orçamentos e a aba Investimento (impressoras e lançamentos) para outro navegador, outra máquina — ou para uma gaveta segura.</p>
+    </div>
+
+    <div class="panel rv" style="padding:0;margin-bottom:18px">
+      <div class="kpis" style="border-bottom:none">
+        <div class="kpi"><b id="sumMats">—</b><span>materiais com preço próprio</span></div>
+        <div class="kpi"><b id="sumQuotes">0</b><span>orçamentos salvos</span></div>
+        <div class="kpi"><b id="sumLot">nenhum</b><span>lote travado</span></div>
+        <div class="kpi"><b id="sumInv">0 · 0</b><span>impressoras · lançamentos de investimento</span></div>
+        <div class="kpi"><b id="sumAt">—</b><span>última gravação automática</span></div>
+        <div class="kpi"><b id="sumApp">v2</b><span>formato do backup</span></div>
+      </div>
+    </div>
+
+    <div class="two">
+      <div class="panel rv" style="padding:22px">
+        <div class="p-head"><span class="num">⬇</span><h3>Exportar</h3></div>
+        <p class="note" style="margin-top:0">Um único arquivo .json com todas as suas configurações — inclui preços de materiais, orçamentos salvos, impressoras cadastradas e lançamentos de investimento.</p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px">
+          <button class="btn solid" id="expBtn">⬇ Baixar backup (.json)</button>
+          <button class="btn" id="copyBtn">Copiar JSON</button>
+        </div>
+      </div>
+      <div class="panel rv" style="padding:22px">
+        <div class="p-head"><span class="num">⬆</span><h3>Restaurar</h3></div>
+        <p class="note" style="margin-top:0">Substitui o estado atual pelo arquivo. Antes de aplicar, o estado de agora é guardado — se o arquivo estiver errado, nada é perdido.</p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px">
+          <label class="btn solid" for="impFile">⬆ Escolher arquivo .json</label>
+          <input type="file" id="impFile" accept=".json,application/json" hidden>
+        </div>
+        <p class="note" id="impMsg" hidden></p>
+      </div>
+    </div>
+
+    <div class="panel rv" style="padding:22px;margin-top:18px;border-color:rgba(255,92,26,.4)">
+      <div class="p-head"><span class="num">×</span><h3>Do zero</h3></div>
+      <p class="note" style="margin-top:0">Apaga deste navegador tudo o que foi personalizado: valores da calculadora, preços de materiais, lote travado, orçamentos e toda a aba Investimento (impressoras e lançamentos).</p>
+      <button class="btn" id="resetBtn" style="margin-top:14px;color:var(--hot)">Restaurar valores de fábrica</button>
+    </div>
+  </section>
+
+  <footer>
+    <div><b>PRECIFICA3D</b><br>Calculadora de precificação para impressão 3D — valores de referência, ajuste com seus números reais.</div>
+    <div class="mono" style="text-align:right">custo · margem · risco<br>sem cadastro, roda offline</div>
+  </footer>
+  </div>
+</main>
+
+<script src="js/core.js"></script>
+<script src="js/dados.js"></script>
+</body>
+</html>

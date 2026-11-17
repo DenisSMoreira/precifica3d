@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Precifica 3D — Calculadora de Preço de Impressão 3D</title>
+<meta name="description" content="Calculadora de preço para impressão 3D: custo de material, energia, depreciação da máquina, mão de obra, falhas e margem. Descubra quanto cobrar por peça.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<script>document.documentElement.classList.remove('no-js')</script>
+</head>
+<body>
+<div class="grain"></div>
+
+<header class="top">
+  <div class="top-in">
+    <a class="brand" href="index.html"><span class="mark"><i></i><i></i><i></i><i></i></span>PRECIFICA<span>3D</span></a>
+    <nav class="nav">
+      <a href="index.html" aria-current="page">Calculadora</a>
+      <a href="materiais.html">Materiais</a>
+      <a href="lotes.html">Lotes &amp; Meta</a>
+      <a href="orcamentos.html">Orçamentos</a>
+      <a href="guia.html">Guia</a>
+      <a href="dados.html">Dados</a>
+      <a href="investimento.html">Investimento</a>
+    </nav>
+    <div class="top-price">Peça atual <b id="chipPrice">R$ 0,00</b></div>
+  </div>
+</header>
+
+<main id="top">
+  <div class="wrap">
+
+  <div class="lcd">
+    <span class="led"></span>
+    <span id="tickerTxt">MATERIAL <b>PLA</b><span class="sep"> | </span>BICO <b>210°C</b><span class="sep"> | </span>MESA <b>60°C</b><span class="sep"> | </span>FILAMENTO <b>1.75mm</b><span class="sep"> | </span>CAMADA <b>0.20mm</b></span>
+    <span style="margin-left:auto">TEMPO DE IMPRESSÃO <b id="tickerTime">0h00</b></span>
+  </div>
+
+  <div class="mast">
+    <div>
+      <div class="kick">01 / Estação de precificação</div>
+      <h1>Quanto cobrar<em>por esta peça?</em></h1>
+      <p>Preencha os cinco blocos. O display ao lado devolve o preço de venda, o custo real da peça e o lucro que sobra depois de filamento, luz, depreciação da máquina, erro de impressão e taxa do marketplace.</p>
+    </div>
+    <div>
+      <div class="rule"></div>
+      <div class="presets" id="presets" role="group" aria-label="Modelos prontos">
+        <button class="pre" data-p="chaveiro">Chaveiro 12g</button>
+        <button class="pre" data-p="vaso">Vaso 15cm</button>
+        <button class="pre" data-p="engren">Engrenagem PETG</button>
+        <button class="pre" data-p="drone">Frame de drone</button>
+        <button class="pre" data-p="placa">Placa de nome</button>
+        <button class="pre" data-p="mini">Miniatura resina</button>
+      </div>
+      <p style="font-size:13px;color:var(--dim);margin-top:14px">Modelos prontos são pontos de partida — ajuste o peso e o tempo com o slicer.</p>
+    </div>
+  </div>
+
+  <!-- CALCULADORA -->
+  <section id="calculadora" class="stage">
+    <div>
+      <div class="panel calc" id="calcPanel">
+        <div class="sweep"></div>
+        <div class="p-head"><span class="num">01</span><h3>A peça</h3><span class="hint">slicer → tempo e peso</span></div>
+        <div class="p-body">
+          <div class="grid">
+            <div class="field">
+              <div class="f-top"><label for="nome">Nome do item</label><span class="u">texto</span></div>
+              <input type="text" id="nome" data-k="nome" value="Vaso espiral 15cm">
+            </div>
+            <div class="field">
+              <div class="f-top"><label id="lbl-peso" for="i-peso">Peso de filamento</label><span class="u">g</span></div>
+              <input type="number" id="i-peso" data-k="peso" min="1" max="4000" step="1" value="128">
+              <input type="range" aria-labelledby="lbl-peso" data-k="peso" min="1" max="600" step="1" value="128">
+            </div>
+            <div class="field">
+              <div class="f-top"><label id="lbl-horas" for="i-horas">Tempo de impressão</label><span class="u">h</span></div>
+              <input type="number" id="i-horas" data-k="horas" min="0" max="80" step="0.5" value="7">
+              <input type="range" aria-labelledby="lbl-horas" data-k="horas" min="0" max="30" step="0.5" value="7">
+            </div>
+            <div class="field">
+              <div class="f-top"><label id="lbl-mins" for="i-mins">…mais minutos</label><span class="u">min</span></div>
+              <input type="number" id="i-mins" data-k="mins" min="0" max="59" step="1" value="20">
+              <input type="range" aria-labelledby="lbl-mins" data-k="mins" min="0" max="59" step="1" value="20">
+            </div>
+          </div>
+          <div class="sub">Desperdício de suporte, brim e briga de primeira camada</div>
+          <div class="grid">
+            <div class="field">
+              <div class="f-top"><label id="lbl-desperdicio" for="i-desperdicio">Sobra / perda de material</label><span class="u">%</span></div>
+              <input type="number" id="i-desperdicio" data-k="desperdicio" min="0" max="80" step="1" value="12">
+              <input type="range" aria-labelledby="lbl-desperdicio" data-k="desperdicio" min="0" max="50" step="1" value="12">
+            </div>
+            <div class="field">
+              <div class="f-top"><label id="lbl-falha" for="i-falha">Taxa de impressão falha</label><span class="u">%</span></div>
+              <input type="number" id="i-falha" data-k="falha" min="0" max="90" step="1" value="12">
+              <input type="range" aria-labelledby="lbl-falha" data-k="falha" min="0" max="50" step="1" value="12">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="p-head"><span class="num">02</span><h3>Filamento</h3><a class="hint" href="materiais.html">editar tabela de materiais →</a></div>
+        <div class="p-body">
+          <div class="chips" id="chips"></div>
+          <div class="grid">
+            <div class="field">
+              <div class="f-top"><label id="lbl-precoKg" for="i-precoKg">Preço do kg</label><span class="u">R$</span></div>
+              <input type="number" id="i-precoKg" data-k="precoKg" min="1" max="900" step="0.1" value="59.90">
+              <input type="range" aria-labelledby="lbl-precoKg" data-k="precoKg" min="20" max="200" step="0.5" value="59.9">
+            </div>
+            <div class="field">
+              <div class="f-top"><label id="lbl-rolo" for="i-rolo">Rendimento do rolo</label><span class="u">g</span></div>
+              <input type="number" id="i-rolo" data-k="rolo" min="100" max="3000" step="10" value="1000">
+              <input type="range" aria-labelledby="lbl-rolo" data-k="rolo" min="250" max="1500" step="10" value="1000">
+            </div>
+          </div>
+          <p class="note" id="matNote">Custo de material por peça: —</p>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="p-head"><span class="num">03</span><h3>Máquina e energia</h3><span class="hint">quanto sua impressora custa por hora</span></div>
+        <div class="p-body">
+          <div class="grid">
+            <div class="field">
+              <div class="f-top"><label id="lbl-maquina" for="i-maquina">Valor da impressora</label><span class="u">R$</span></div>
+              <input type="number" id="i-maquina" data-k="maquina" min="0" max="200000" step="50" value="2400">
+              <input type="range" aria-labelledby="lbl-maquina" data-k="maquina" min="500" max="12000" step="50" value="2400">
+            </div>
+            <div class="field">
+              <div class="f-top"><label id="lbl-vida" for="i-vida">Vida útil estimada</label><span class="u">horas</span></div>
+              <input type="number" id="i-vida" data-k="vida" min="200" max="20000" step="50" value="4000">
+              <input type="range" aria-labelledby="lbl-vida" data-k="vida" min="1000" max="10000" step="50" value="4000">
+            </div>
+            <div class="field">
+              <div class="f-top"><label id="lbl-potencia" for="i-potencia">Consumo médio</label><span class="u">W</span></div>
+              <input type="number" id="i-potencia" data-k="potencia" min="10" max="1500" step="5" value="145">
+              <input type="range" aria-labelledby="lbl-potencia" data-k="potencia" min="20" max="600" step="5" value="145">
+            </div>
+            <div class="field">
+              <div class="f-top"><label id="lbl-tarifa" for="i-tarifa">Tarifa de energia</label><span class="u">R$/kWh</span></div>
+              <input type="number" id="i-tarifa" data-k="tarifa" min="0.1" max="3" step="0.01" value="0.98">
+              <input type="range" aria-labelledby="lbl-tarifa" data-k="tarifa" min="0.2" max="2" step="0.01" value="0.98">
+            </div>
+            <div class="field">
+              <div class="f-top"><label id="lbl-manut" for="i-manut">Manutenção (bico, cinta, mesa)</label><span class="u">R$/h</span></div>
+              <input type="number" id="i-manut" data-k="manut" min="0" max="30" step="0.1" value="1.20">
+              <input type="range" aria-labelledby="lbl-manut" data-k="manut" min="0" max="10" step="0.1" value="1.2">
+            </div>
+          </div>
+          <p class="note" id="machineNote">Custo de máquina: —</p>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="p-head"><span class="num">04</span><h3>Mão de obra e acabamentos</h3><span class="hint">cobra o tempo que não aparece no slicer</span></div>
+        <div class="p-body">
+          <div class="grid">
+            <div class="field">
+              <div class="f-top"><label id="lbl-prepMin" for="i-prepMin">Preparo do arquivo</label><span class="u">min</span></div>
+              <input type="number" id="i-prepMin" data-k="prepMin" min="0" max="240" step="1" value="15">
+              <input type="range" aria-labelledby="lbl-prepMin" data-k="prepMin" min="0" max="90" step="1" value="15">
+            </div>
+            <div class="field">
+              <div class="f-top"><label id="lbl-posMin" for="i-posMin">Pós-processamento</label><span class="u">min</span></div>
+              <input type="number" id="i-posMin" data-k="posMin" min="0" max="240" step="1" value="12">
+              <input type="range" aria-labelledby="lbl-posMin" data-k="posMin" min="0" max="90" step="1" value="12">
+            </div>
+            <div class="field">
+              <div class="f-top"><label id="lbl-horaTrab" for="i-horaTrab">Valor da sua hora</label><span class="u">R$</span></div>
+              <input type="number" id="i-horaTrab" data-k="horaTrab" min="0" max="300" step="1" value="40">
+              <input type="range" aria-labelledby="lbl-horaTrab" data-k="horaTrab" min="10" max="150" step="1" value="40">
+            </div>
+            <div class="field">
+              <div class="f-top"><label id="lbl-emb" for="i-emb">Embalagem e etiqueta</label><span class="u">R$</span></div>
+              <input type="number" id="i-emb" data-k="emb" min="0" max="100" step="0.5" value="3.50">
+              <input type="range" aria-labelledby="lbl-emb" data-k="emb" min="0" max="25" step="0.1" value="3.5">
+            </div>
+            <div class="field">
+              <div class="f-top"><label id="lbl-extra" for="i-extra">Insumos extras (cola, ímã, parafuso)</label><span class="u">R$</span></div>
+              <input type="number" id="i-extra" data-k="extra" min="0" max="500" step="0.5" value="0">
+              <input type="range" aria-labelledby="lbl-extra" data-k="extra" min="0" max="60" step="0.5" value="0">
+            </div>
+            <div class="field">
+              <div class="f-top"><label id="lbl-fixos" for="i-fixos">Custos fixos do mês</label><span class="u">R$</span></div>
+              <input type="number" id="i-fixos" data-k="fixos" min="0" max="50000" step="10" value="480">
+              <input type="range" aria-labelledby="lbl-fixos" data-k="fixos" min="0" max="4000" step="10" value="480">
+            </div>
+            <div class="field">
+              <div class="f-top"><label id="lbl-pecasMes" for="i-pecasMes">Peças que você entrega/mês</label><span class="u">un</span></div>
+              <input type="number" id="i-pecasMes" data-k="pecasMes" min="1" max="5000" step="1" value="90">
+              <input type="range" aria-labelledby="lbl-pecasMes" data-k="pecasMes" min="1" max="500" step="1" value="90">
+            </div>
+          </div>
+          <label class="switch" style="margin-top:16px"><input type="checkbox" data-ka="ratear" checked> Ratear custos fixos dentro do custo da peça</label>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="p-head"><span class="num">05</span><h3>Como você vende</h3><span class="hint">margem, imposto e taxa de plataforma</span></div>
+        <div class="p-body">
+          <div class="grid">
+            <div class="field">
+              <div class="f-top"><label id="lbl-margem" for="i-margem">Margem de lucro sobre o custo</label><span class="u">%</span></div>
+              <input type="number" id="i-margem" data-k="margem" min="0" max="800" step="5" value="140">
+              <input type="range" aria-labelledby="lbl-margem" data-k="margem" min="0" max="400" step="5" value="140">
+            </div>
+            <div class="field">
+              <div class="f-top"><label id="lbl-imposto" for="i-imposto">Imposto (MEI / Simples)</label><span class="u">%</span></div>
+              <input type="number" id="i-imposto" data-k="imposto" min="0" max="30" step="0.5" value="6">
+              <input type="range" aria-labelledby="lbl-imposto" data-k="imposto" min="0" max="20" step="0.5" value="6">
+            </div>
+            <div class="field">
+              <div class="f-top"><label id="lbl-taxa" for="i-taxa">Taxa do marketplace / cartão</label><span class="u">%</span></div>
+              <input type="number" id="i-taxa" data-k="taxa" min="0" max="40" step="0.5" value="14">
+              <input type="range" aria-labelledby="lbl-taxa" data-k="taxa" min="0" max="30" step="0.5" value="14">
+            </div>
+          </div>
+          <div style="display:flex;gap:22px;flex-wrap:wrap;margin-top:16px">
+            <label class="switch"><input type="checkbox" data-ka="arredonda" checked> Arredondar para R$ x,90</label>
+            <label class="switch"><input type="checkbox" data-ka="mostrarMin"> Alertar se ficar abaixo do preço mínimo</label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DISPLAY -->
+    <aside class="read" aria-label="Resultado">
+      <div class="panel" id="readout">
+        <div class="rd-top">
+          <div class="rd-label">Preço de venda sugerido</div>
+          <div class="price" id="price"><small>R$</small><span id="priceVal">0,00</span></div>
+          <div class="price-note" id="rangeLine">Mínimo <b id="pMin">—</b> · Premium <b id="pMax">—</b></div>
+          <span id="srOut" class="sr-only" role="status"></span>
+        </div>
+        <div class="gauge">
+          <svg viewBox="0 0 100 100" aria-hidden="true">
+            <circle class="ring" cx="50" cy="50" r="40"></circle>
+            <circle class="val" id="ring" cx="50" cy="50" r="40" transform="rotate(-90 50 50)" stroke-dasharray="251.3" stroke-dashoffset="251.3"></circle>
+          </svg>
+          <div class="g-txt">Lucro por peça<b id="lucro">R$ 0,00</b>margem líquida <span id="mliq">0%</span></div>
+        </div>
+        <div class="kpis">
+          <div class="kpi"><b id="custo">R$ 0,00</b><span>custo real da peça</span></div>
+          <div class="kpi pos"><b id="perGram">R$ 0,00</b><span>por grama impressa</span></div>
+          <div class="kpi"><b id="perHora">R$ 0,00</b><span>lucro por hora de máquina</span></div>
+          <div class="kpi"><b id="payback">0</b><span>peças p/ pagar a impressora</span></div>
+        </div>
+        <div class="stack" id="stack" aria-hidden="true"></div>
+        <div class="legend" id="legend"></div>
+        <div class="warner" id="warner" hidden></div>
+        <div class="acts">
+          <button class="btn solid" id="addQuote">+ Salvar orçamento</button>
+          <button class="btn" id="copyQuote">Copiar resumo</button>
+        </div>
+      </div>
+    </aside>
+  </section>
+  </div>
+
+<div class="marq" aria-hidden="true"><div class="marq-in" id="marq"></div></div>
+
+  <div class="wrap">
+  <footer>
+    <div><b>PRECIFICA3D</b><br>Calculadora de precificação para impressão 3D — valores de referência, ajuste com seus números reais.</div>
+    <div class="mono" style="text-align:right">custo · margem · risco<br>sem cadastro, roda offline</div>
+  </footer>
+  </div>
+</main>
+
+<script src="js/core.js"></script>
+<script src="js/calc.js"></script>
+</body>
+</html>

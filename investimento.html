@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Investimento — impressoras, filamentos e peças — Precifica 3D</title>
+<meta name="description" content="Cadastre suas impressoras e lance todas as compras — filamentos, ferramentas e apetrechos, peças de reposição — com estoque de filamento, gasto por mês e total investido salvos no navegador.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<script>document.documentElement.classList.remove('no-js')</script>
+</head>
+<body>
+<div class="grain"></div>
+
+<header class="top">
+  <div class="top-in">
+    <a class="brand" href="index.html"><span class="mark"><i></i><i></i><i></i><i></i></span>PRECIFICA<span>3D</span></a>
+    <nav class="nav">
+      <a href="index.html">Calculadora</a>
+      <a href="materiais.html">Materiais</a>
+      <a href="lotes.html">Lotes &amp; Meta</a>
+      <a href="orcamentos.html">Orçamentos</a>
+      <a href="guia.html">Guia</a>
+      <a href="dados.html">Dados</a>
+      <a href="investimento.html" aria-current="page">Investimento</a>
+    </nav>
+    <div class="top-price">Peça atual <b id="chipPrice">R$ 0,00</b></div>
+  </div>
+</header>
+
+<main id="top">
+  <div class="wrap">
+
+  <!-- VISÃO GERAL -->
+  <section id="visao" class="blk">
+    <div class="head rv">
+      <div>
+        <div class="kick">10 / Investimentos</div>
+        <h1>Quanto já entrou na máquina — e quanto sai em filamento e peças</h1>
+      </div>
+      <p>Cadastre cada impressora e lance toda compra: filamento, ferramenta, peça de reposição. Tudo fica salvo neste navegador e entra no backup da aba Dados.</p>
+    </div>
+    <div class="panel rv" style="padding:0;margin-bottom:18px">
+      <div class="kpis" style="border-bottom:none">
+        <div class="kpi"><b id="kpiTotal">R$ 0,00</b><span>total investido (máquinas + compras)</span></div>
+        <div class="kpi"><b id="kpiPrint">—</b><span>frota de impressoras</span></div>
+        <div class="kpi pos"><b id="kpiFil">—</b><span>filamento comprado · média R$/kg</span></div>
+        <div class="kpi"><b id="kpiManut">R$ 0,00</b><span>peças e apetrechos (manutenção)</span></div>
+      </div>
+    </div>
+    <div class="two rv">
+      <div class="panel" style="padding:18px">
+        <div class="p-head" style="margin:-18px -18px 16px;border-bottom:1px solid var(--line)"><span class="num">▮</span><h3>Gasto por mês</h3><span class="hint">últimos 12 meses · compras + máquinas</span></div>
+        <div class="bars" id="mBars" role="img" aria-label="Gasto por mês nos últimos 12 meses"></div>
+        <p class="note" id="mNote">—</p>
+      </div>
+      <div class="panel" style="padding:18px">
+        <div class="p-head" style="margin:-18px -18px 16px"><span class="num">≡</span><h3>Para onde foi o dinheiro</h3><span class="hint">compras lançadas</span></div>
+        <div class="stack" id="catBar" style="margin:4px 0 12px" aria-hidden="true"></div>
+        <div class="legend" id="catLegend" style="padding:0"></div>
+        <p class="note">Impressoras entram como investimento; filamento e peças como custo operacional. A <a href="index.html">calculadora</a> usa a depreciação da máquina na hora de formar o preço.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- IMPRESSORAS -->
+  <section id="frota" class="blk" style="padding-top:0">
+    <div class="head rv">
+      <div>
+        <div class="kick">11 / Frota</div>
+        <h1>Cadastro de impressoras</h1>
+      </div>
+      <p>Valor pago, vida útil e consumo de cada máquina. O botão <b>→ calculadora</b> leva esses números direto para os blocos de máquina e energia.</p>
+    </div>
+    <div class="panel rv">
+      <div class="p-head"><span class="num">＋</span><h3 id="pFormTitle">Nova impressora</h3><span class="hint">campos com * são obrigatórios</span></div>
+      <div class="p-body">
+        <div class="grid">
+          <div class="field">
+            <div class="f-top"><label for="f-p-nome">Modelo *</label><span class="u">texto</span></div>
+            <input type="text" id="f-p-nome" placeholder="Ender 3 V3 SE">
+          </div>
+          <div class="field">
+            <div class="f-top"><label for="f-p-marca">Marca</label><span class="u">texto</span></div>
+            <input type="text" id="f-p-marca" placeholder="Creality">
+          </div>
+          <div class="field">
+            <div class="f-top"><label for="f-p-tech">Tecnologia</label><span class="u">select</span></div>
+            <select id="f-p-tech">
+              <option>FDM (filamento)</option>
+              <option>Resina (MSLA/FDM)</option>
+              <option>Delta</option>
+              <option>Outra</option>
+            </select>
+          </div>
+          <div class="field">
+            <div class="f-top"><label for="f-p-preco">Valor pago *</label><span class="u">R$</span></div>
+            <input type="number" id="f-p-preco" min="0" max="500000" step="0.01" placeholder="2400">
+          </div>
+          <div class="field">
+            <div class="f-top"><label for="f-p-data">Data da compra</label><span class="u">data</span></div>
+            <input type="date" id="f-p-data">
+          </div>
+          <div class="field">
+            <div class="f-top"><label for="f-p-forn">Fornecedor</label><span class="u">texto</span></div>
+            <input type="text" id="f-p-forn" placeholder="Loja, marketplace…">
+          </div>
+          <div class="field">
+            <div class="f-top"><label for="f-p-vida">Vida útil estimada</label><span class="u">horas</span></div>
+            <input type="number" id="f-p-vida" min="100" max="50000" step="50" value="4000">
+          </div>
+          <div class="field">
+            <div class="f-top"><label for="f-p-pot">Consumo médio</label><span class="u">W</span></div>
+            <input type="number" id="f-p-pot" min="10" max="3000" step="5" value="145">
+          </div>
+          <div class="field">
+            <div class="f-top"><label for="f-p-gar">Garantia</label><span class="u">meses</span></div>
+            <input type="number" id="f-p-gar" min="0" max="60" step="1" value="12">
+          </div>
+          <div class="field">
+            <div class="f-top"><label for="f-p-obs">Observações</label><span class="u">texto</span></div>
+            <input type="text" id="f-p-obs" placeholder="ex.: veio com hotspot, troquei a fonte">
+          </div>
+        </div>
+        <div class="acts" style="padding:16px 0 0">
+          <button class="btn solid" id="pAdd" type="button">＋ Cadastrar impressora</button>
+          <button class="btn" id="pCancel" type="button" hidden>Cancelar edição</button>
+        </div>
+        <p class="note" id="pMsg" hidden></p>
+      </div>
+    </div>
+    <div class="tblwrap rv" style="margin-top:18px">
+      <table>
+        <thead><tr><th>Impressora</th><th>Tecnologia</th><th>Compra</th><th>Valor</th><th>Depreciação</th><th>Compras ligadas</th><th>Total na máquina</th><th></th></tr></thead>
+        <tbody id="prTable"></tbody>
+      </table>
+    </div>
+    <p class="note" id="prHint"></p>
+  </section>
+
+  <!-- LANÇAMENTOS -->
+  <section id="lancamentos" class="blk" style="padding-top:0">
+    <div class="head rv">
+      <div>
+        <div class="kick">12 / Lançamentos</div>
+        <h1>Compra de filamento, apetrecho ou peça — lança aqui</h1>
+      </div>
+      <p>Cada lançamento alimenta o estoque de filamento, o gasto do mês e o total que cada impressora custou. Edite ou apague pela própria linha.</p>
+    </div>
+    <div class="panel rv">
+      <div class="p-head"><span class="num">＋</span><h3 id="bFormTitle">Novo lançamento</h3><span class="hint">filamento ganha controle de estoque</span></div>
+      <div class="p-body">
+        <div class="chips" id="tipoChips" role="group" aria-label="Tipo de lançamento">
+          <button class="chip" type="button" data-t="filamento" aria-pressed="true">Filamento</button>
+          <button class="chip" type="button" data-t="apetrecho" aria-pressed="false">Ferramenta / apetrecho</button>
+          <button class="chip" type="button" data-t="peca" aria-pressed="false">Peça de reposição</button>
+          <button class="chip" type="button" data-t="outros" aria-pressed="false">Outro</button>
+        </div>
+        <div class="grid">
+          <div class="field">
+            <div class="f-top"><label for="f-b-desc">Descrição *</label><span class="u">texto</span></div>
+            <input type="text" id="f-b-desc" placeholder="PLA Silk dourado 1kg">
+          </div>
+          <div class="field" id="filMatWrap">
+            <div class="f-top"><label for="f-b-material">Material</label><span class="u">select</span></div>
+            <select id="f-b-material"></select>
+          </div>
+          <div class="field" id="filGrWrap">
+            <div class="f-top"><label for="f-b-grams">Peso por rolo / pacote</label><span class="u">g</span></div>
+            <input type="number" id="f-b-grams" min="1" max="20000" step="1" value="1000">
+          </div>
+          <div class="field">
+            <div class="f-top"><label for="f-b-qtd">Quantidade</label><span class="u">un</span></div>
+            <input type="number" id="f-b-qtd" min="1" max="1000" step="1" value="1">
+          </div>
+          <div class="field">
+            <div class="f-top"><label for="f-b-preco">Valor unitário *</label><span class="u">R$</span></div>
+            <input type="number" id="f-b-preco" min="0" max="100000" step="0.01" placeholder="59.90">
+          </div>
+          <div class="field">
+            <div class="f-top"><label for="f-b-data">Data da compra</label><span class="u">data</span></div>
+            <input type="date" id="f-b-data">
+          </div>
+          <div class="field">
+            <div class="f-top"><label for="f-b-forn">Fornecedor</label><span class="u">texto</span></div>
+            <input type="text" id="f-b-forn" placeholder="Loja do bairro, marketplace…">
+          </div>
+          <div class="field">
+            <div class="f-top"><label for="f-b-printer">Usada na impressora</label><span class="u">opcional</span></div>
+            <select id="f-b-printer"></select>
+          </div>
+          <div class="field">
+            <div class="f-top"><label for="f-b-obs">Observações</label><span class="u">texto</span></div>
+            <input type="text" id="f-b-obs" placeholder="ex.: bico 0.4 endurecido">
+          </div>
+        </div>
+        <p class="note" id="bPreview">Total do lançamento: —</p>
+        <div class="acts" style="padding:16px 0 0">
+          <button class="btn solid" id="bAdd" type="button">＋ Lançar compra</button>
+          <button class="btn" id="bCancel" type="button" hidden>Cancelar edição</button>
+        </div>
+        <p class="note" id="bMsg" hidden></p>
+      </div>
+    </div>
+    <div class="rv" style="margin-top:18px">
+      <div class="chips" id="buyChips" role="group" aria-label="Filtrar lançamentos"></div>
+      <div class="tblwrap">
+        <table>
+          <thead><tr><th>Data</th><th>Descrição</th><th>Categoria</th><th>Impressora</th><th>Fornecedor</th><th>Qtd</th><th>Unitário</th><th>Total</th><th></th></tr></thead>
+          <tbody id="buyTable"></tbody>
+        </table>
+      </div>
+      <div class="total"><span>Total filtrado <span id="bCount" class="mono"></span></span><b id="bTotal">R$ 0,00</b></div>
+    </div>
+  </section>
+
+  <!-- ESTOQUE -->
+  <section id="estoque" class="blk" style="padding-top:0">
+    <div class="head rv">
+      <div>
+        <div class="kick">13 / Estoque</div>
+        <h1>Filamento comprado por material</h1>
+      </div>
+      <p>Quilos entrados pelo que você pagou — a média R$/kg de cada material é o número honesto para colocar na calculadora.</p>
+    </div>
+    <div class="tblwrap rv">
+      <table>
+        <thead><tr><th>Material</th><th>Rolos / pacotes</th><th>Kg comprados</th><th>Total gasto</th><th>Média R$/kg</th></tr></thead>
+        <tbody id="stTable"></tbody>
+      </table>
+    </div>
+    <p class="note">Clique em uma linha para levar a média R$/kg daquele material para o bloco <b>Filamento</b> da <a href="index.html">calculadora</a>.</p>
+  </section>
+
+  <footer>
+    <div><b>PRECIFICA3D</b><br>Calculadora de precificação para impressão 3D — valores de referência, ajuste com seus números reais.</div>
+    <div class="mono" style="text-align:right">custo · margem · risco<br>sem cadastro, roda offline</div>
+  </footer>
+  </div>
+</main>
+
+<script src="js/core.js"></script>
+<script src="js/investimento.js"></script>
+</body>
+</html>

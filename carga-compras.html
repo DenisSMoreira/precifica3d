@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Carga de compras — Precifica 3D</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<script>document.documentElement.classList.remove('no-js')</script>
+</head>
+<body>
+<div class="grain"></div>
+
+<header class="top">
+  <div class="top-in">
+    <a class="brand" href="index.html"><span class="mark"><i></i><i></i><i></i><i></i></span>PRECIFICA<span>3D</span></a>
+    <nav class="nav">
+      <a href="index.html">Calculadora</a>
+      <a href="materiais.html">Materiais</a>
+      <a href="lotes.html">Lotes &amp; Meta</a>
+      <a href="orcamentos.html">Orçamentos</a>
+      <a href="guia.html">Guia</a>
+      <a href="dados.html">Dados</a>
+      <a href="investimento.html">Investimento</a>
+    </nav>
+    <div class="top-price">Peça atual <b id="chipPrice">R$ 0,00</b></div>
+  </div>
+</header>
+
+<main id="top">
+  <div class="wrap">
+
+  <section id="carga" class="blk">
+    <div class="head rv">
+      <div>
+        <div class="kick">Carga única / nov 2026</div>
+        <h1>Suas compras do Mercado Livre e AliExpress, prontas para entrar no Investimento</h1>
+      </div>
+      <p>3 impressoras + 36 lançamentos já categorizados (peças ligadas à impressora certa, filamentos com material). Clique em adicionar — a carga é segura: itens repetidos não entram duas vezes.</p>
+    </div>
+
+    <div class="panel rv" style="padding:0;margin-bottom:18px">
+      <div class="kpis" style="border-bottom:none">
+        <div class="kpi"><b id="cTotal">—</b><span>total da carga (máquinas + compras)</span></div>
+        <div class="kpi"><b id="cPrint">3</b><span>impressoras novas</span></div>
+        <div class="kpi"><b id="cPeca">—</b><span>peças de reposição</span></div>
+        <div class="kpi"><b id="cApe">—</b><span>apetrechos / ferramentas</span></div>
+      </div>
+    </div>
+
+    <div class="tblwrap rv">
+      <table>
+        <thead><tr><th>O que entra</th><th>Categoria</th><th>Fornecedor</th><th>Impressora</th><th>Qtd</th><th>Total</th></tr></thead>
+        <tbody id="cTable"></tbody>
+      </table>
+    </div>
+
+    <div class="acts rv" style="border:1px solid var(--line);margin-top:18px">
+      <button class="btn solid" id="loadBtn" type="button">＋ Adicionar tudo ao meu Investimento</button>
+      <a class="btn" id="goBtn" href="investimento.html" hidden>Ver no Investimento →</a>
+    </div>
+    <p class="note" id="loadMsg" hidden></p>
+    <p class="note">Depois de adicionar, vale abrir a aba <a href="investimento.html">Investimento</a> e clicar em <b>editar</b> nas linhas para colocar a data de cada compra — assim o gráfico "gasto por mês" fica fiel.</p>
+  </section>
+
+  <footer>
+    <div><b>PRECIFICA3D</b><br>Calculadora de precificação para impressão 3D — valores de referência, ajuste com seus números reais.</div>
+    <div class="mono" style="text-align:right">custo · margem · risco<br>sem cadastro, roda offline</div>
+  </footer>
+  </div>
+</main>
+
+<script src="js/core.js"></script>
+<script src="js/carga-compras.js"></script>
+</body>
+</html>

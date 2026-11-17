@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Orçamentos salvos — Precifica 3D</title>
+<meta name="description" content="Sua lista de cotações de impressão 3D salva no navegador: custo e preço lado a lado, pronta para copiar, imprimir em PDF ou enviar ao cliente.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<script>document.documentElement.classList.remove('no-js')</script>
+</head>
+<body>
+<div class="grain"></div>
+
+<header class="top">
+  <div class="top-in">
+    <a class="brand" href="index.html"><span class="mark"><i></i><i></i><i></i><i></i></span>PRECIFICA<span>3D</span></a>
+    <nav class="nav">
+      <a href="index.html">Calculadora</a>
+      <a href="materiais.html">Materiais</a>
+      <a href="lotes.html">Lotes &amp; Meta</a>
+      <a href="orcamentos.html" aria-current="page">Orçamentos</a>
+      <a href="guia.html">Guia</a>
+      <a href="dados.html">Dados</a>
+      <a href="investimento.html">Investimento</a>
+    </nav>
+    <div class="top-price">Peça atual <b id="chipPrice">R$ 0,00</b></div>
+  </div>
+</header>
+
+<main id="top">
+  <div class="wrap">
+
+  <!-- ORÇAMENTOS -->
+  <section id="orcamentos" class="blk">
+    <div class="head rv">
+      <div>
+        <div class="kick">07 / Orçamentos</div>
+        <h1>Sua lista de cotações, salva neste navegador</h1>
+      </div>
+      <p>Cada peça pode entrar em uma lista para enviar ao cliente pronta, com custo e preço lado a lado.</p>
+    </div>
+    <div class="rv">
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:6px">
+        <button class="btn solid" id="saveCur">+ Salvar peça atual</button>
+        <a class="btn" href="index.html">Ajustar na calculadora</a>
+      </div>
+      <p class="note" id="ctx"></p>
+      <div id="quoteList"></div>
+      <div class="total"><span>Total da lista <span id="qCount" class="mono"></span></span><b id="qTotal">R$ 0,00</b></div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:6px">
+        <button class="btn" id="copyList">Copiar lista</button>
+        <button class="btn" id="printList">Imprimir / PDF</button>
+        <button class="btn" id="clearList">Limpar lista</button>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div><b>PRECIFICA3D</b><br>Calculadora de precificação para impressão 3D — valores de referência, ajuste com seus números reais.</div>
+    <div class="mono" style="text-align:right">custo · margem · risco<br>sem cadastro, roda offline</div>
+  </footer>
+  </div>
+</main>
+
+<script src="js/core.js"></script>
+<script src="js/orcamentos.js"></script>
+</body>
+</html>

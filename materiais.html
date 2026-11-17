@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Materiais e preço do kg — Precifica 3D</title>
+<meta name="description" content="Edite o preço do kg de cada filamento — PLA, PETG, ABS, ASA, TPU, nylon e resina. O material escolhido e o preço caem direto na calculadora e ficam salvos no navegador.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<script>document.documentElement.classList.remove('no-js')</script>
+</head>
+<body>
+<div class="grain"></div>
+
+<header class="top">
+  <div class="top-in">
+    <a class="brand" href="index.html"><span class="mark"><i></i><i></i><i></i><i></i></span>PRECIFICA<span>3D</span></a>
+    <nav class="nav">
+      <a href="index.html">Calculadora</a>
+      <a href="materiais.html" aria-current="page">Materiais</a>
+      <a href="lotes.html">Lotes &amp; Meta</a>
+      <a href="orcamentos.html">Orçamentos</a>
+      <a href="guia.html">Guia</a>
+      <a href="dados.html">Dados</a>
+      <a href="investimento.html">Investimento</a>
+    </nav>
+    <div class="top-price">Peça atual <b id="chipPrice">R$ 0,00</b></div>
+  </div>
+</header>
+
+<main id="top">
+  <div class="wrap">
+
+  <!-- MATERIAIS -->
+  <section id="materiais" class="blk">
+    <div class="head rv">
+      <div>
+        <div class="kick">02 / Biblioteca de materiais</div>
+        <h1>Escolha o filamento, o preço do kg já cai na calculadora</h1>
+      </div>
+      <p>Preços são médias de mercado em rolos de 1kg — edite os valores com o que você realmente paga no seu fornecedor. As alterações ficam salvas no seu navegador.</p>
+    </div>
+    <div class="two">
+      <div class="tblwrap rv">
+        <table id="matTable">
+          <thead><tr><th>Material</th><th>Bico / mesa</th><th>Preço kg (R$)</th><th>Uso típico</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="rv">
+        <svg class="spool" viewBox="0 0 200 200" aria-label="Rolo de filamento">
+          <circle cx="100" cy="100" r="86" fill="none" stroke="rgba(245,240,232,.14)" stroke-width="2"/>
+          <g class="wound" id="spool">
+            <circle cx="100" cy="100" r="74" fill="none" stroke="var(--hot)" stroke-width="1"/>
+            <circle cx="100" cy="100" r="66" fill="none" stroke="var(--amber)" stroke-width="1"/>
+            <circle cx="100" cy="100" r="58" fill="none" stroke="var(--hot)" stroke-width="1"/>
+            <circle cx="100" cy="100" r="50" fill="none" stroke="var(--teal)" stroke-width="1"/>
+            <circle cx="100" cy="100" r="42" fill="none" stroke="var(--amber)" stroke-width="1"/>
+            <path d="M100 26 A74 74 0 0 1 174 100" fill="none" stroke="#fff" stroke-width="2.5"/>
+            <circle cx="100" cy="100" r="18" fill="none" stroke="rgba(245,240,232,.35)" stroke-width="2"/>
+            <line x1="100" y1="82" x2="100" y2="118" stroke="rgba(245,240,232,.2)"/>
+          </g>
+          <circle cx="100" cy="100" r="96" fill="none" stroke="rgba(255,92,26,.35)" stroke-width="1" stroke-dasharray="3 6"/>
+        </svg>
+        <p class="note">O rolo gira mais rápido quando a peça leva menos tempo — é a mesma lógica do seu custo por hora: máquina parada também custa.</p>
+      </div>
+    </div>
+    <p class="note">A linha destacada é o material ativo — clicar em outra linha troca o material e o preço do kg usados na <a href="index.html">calculadora</a>.</p>
+  </section>
+
+  <footer>
+    <div><b>PRECIFICA3D</b><br>Calculadora de precificação para impressão 3D — valores de referência, ajuste com seus números reais.</div>
+    <div class="mono" style="text-align:right">custo · margem · risco<br>sem cadastro, roda offline</div>
+  </footer>
+  </div>
+</main>
+
+<script src="js/core.js"></script>
+<script src="js/materiais.js"></script>
+</body>
+</html>

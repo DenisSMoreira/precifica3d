@@ -1,0 +1,92 @@
+/* Página Calculadora (index): blocos de entrada + display ao vivo. */
+(function(){
+  const P=window.P3D; const {$,$$,brl,nf,esc,hhmm,MATERIALS,PRESETS,DEF,S,model}=P;
+
+  /* ---- chips de material ---- */
+  const chips=$('#chips');
+  MATERIALS.forEach(m=>{const b=document.createElement('button');b.className='chip';b.type='button';b.textContent=m.n;chips.append(b);});
+  function paintChips(){$$('.chip',chips).forEach(c=>c.setAttribute('aria-pressed',String(c.textContent===S.mat)));}
+  chips.onclick=e=>{if(e.target.classList.contains('chip'))P.setMat(e.target.textContent);};
+  document.addEventListener('p3d:mat',()=>{paintChips();calc();});
+  paintChips();
+
+  /* ---- inputs (binding compartilhado do núcleo) ---- */
+  P.bindFields(k=>{
+    if(k==='precoKg'){const m=MATERIALS.find(x=>x.n===S.mat);if(m){m.kg=S.precoKg;P.store();drawMarq();}}
+    calc();
+  });
+  P.syncAll(); // valores persistidos mandam nos campos, não o valor inicial do HTML
+
+  /* ---- ticker de materiais ---- */
+  function drawMarq(){
+    const segs=MATERIALS.map(m=>'<span><em>'+esc(m.n)+'</em> '+m.bico+'° · R$ '+nf(m.kg,2)+'/kg · '+esc(m.u)+'</span>');
+    const el=$('#marq');if(el)el.innerHTML=segs.join('').repeat(2);
+  }
+  drawMarq();
+
+  /* ---- display ---- */
+  let last=null,srT;
+  function calc(){
+    const m=model(1);last=m;
+    const {preco,custo,lucro}=m;
+    const mliq=preco>0?lucro/preco*100:0;
+    const payback=lucro>0?S.maquina/lucro:Infinity;
+
+    const p=$('#price');p.classList.add('bump');clearTimeout(p._t);p._t=setTimeout(()=>p.classList.remove('bump'),180);
+    $('#priceVal').textContent=preco.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+    $('#chipPrice').textContent=brl(preco);
+    $('#pMin').textContent=brl(m.min);$('#pMax').textContent=brl(m.max);
+    $('#lucro').textContent=brl(lucro);$('#mliq').textContent=nf(mliq,1)+'%';
+    $('#custo').textContent=brl(custo);
+    $('#perGram').textContent=brl(S.peso?preco/S.peso:0);
+    $('#perHora').textContent=brl(m.h?lucro/m.h:0);
+    $('#payback').textContent=isFinite(payback)?nf(payback,0)+' un.':'—';
+    const ring=$('#ring'),C=2*Math.PI*40;
+    ring.style.strokeDashoffset=C*(1-Math.min(1,Math.max(0,mliq/80)));
+    ring.style.stroke=mliq<20?'#C1481F':mliq<35?'#F0A93B':'#17A398';
+    $('#lucro').parentElement.parentElement.style.color=mliq<0?'var(--hot)':'';
+    $('#tickerTime').textContent=hhmm(m.h);
+    const mat=MATERIALS.find(x=>x.n===S.mat)||{bico:0,mesa:0};
+    $('#tickerTxt').innerHTML='MATERIAL <b>'+esc(S.mat)+'</b><span class="sep"> | </span>BICO <b>'+(mat.bico||'—')+'°</b><span class="sep"> | </span>MESA <b>'+(mat.mesa||'—')+'°</b><span class="sep"> | </span>FILAMENTO <b>1.75mm</b><span class="sep"> | </span>CAMADA <b>0.20mm</b>';
+    $('#matNote').textContent='Custo de material: '+brl(m.material)+' · '+nf(m.pesoBruto,1)+'g usados (inclui desperdício) · rendimento ≈ '+nf(S.rolo/(m.pesoBruto||1),1)+' peças por rolo.';
+    $('#machineNote').textContent='Custo de máquina: '+brl(m.maq/(m.h||1))+'/h ('+brl(m.maq)+' nesta peça de '+hhmm(m.h)+').';
+
+    const parts=[['Filamento',m.material,'var(--amber)'],['Energia',m.energia,'var(--hot)'],['Máquina',m.maq,'var(--rust)'],
+      ['Mão de obra',m.mo,'var(--teal)'],['Embalagem/extras',m.extras,'var(--olive)'],['Custos fixos',m.fixoSolo,'var(--slate)'],
+      ['Risco/falha',m.risco,'var(--plum)'],['Imposto',m.impV,'#5d4a3a'],['Taxa plataforma',m.taxV,'#3f5f6e']];
+    const tot=parts.reduce((a,pt)=>a+pt[1],0)||1;
+    $('#stack').innerHTML=parts.map(pt=>'<i style="width:'+(pt[1]/tot*100)+'%;background:'+pt[2]+'" title="'+pt[0]+'"></i>').join('');
+    $('#legend').innerHTML=parts.filter(pt=>pt[1]>0.0001).map(pt=>'<span><i style="background:'+pt[2]+'"></i>'+pt[0]+' <b>'+brl(pt[1])+'</b></span>').join('');
+
+    const w=$('#warner');
+    if(S.mostrarMin&&preco<m.min*1.0001){w.hidden=false;w.style.borderColor='#FF5C1A';w.innerHTML='<b>Atenção:</b> o preço está no limite do custo. Margem líquida de '+nf(mliq,1)+'% não sustenta máquina parada nem erro de impressão.';}
+    else if(S.falha>30){w.hidden=false;w.innerHTML='<b>Taxa de falha alta ('+nf(S.falha,0)+'%):</b> reduzir insucesso costuma render mais do que subir preço.';}
+    else if(m.h>0&&(lucro/m.h)<5){w.hidden=false;w.innerHTML='<b>Rendimento baixo:</b> '+brl(lucro/m.h)+' por hora de máquina. Considere fatiar em múltiplas peças por mesa ou aumentar a margem.';}
+    else w.hidden=true;
+
+    clearTimeout(srT);srT=setTimeout(()=>{$('#srOut').textContent='Preço sugerido '+brl(preco)+', custo '+brl(custo)+', lucro '+brl(lucro)+'.';},500);
+  }
+  function flashPanel(){const p=$('#calcPanel');p.classList.remove('flash');void p.offsetWidth;p.classList.add('flash');}
+
+  /* ---- salvar / copiar ---- */
+  const aq=$('#addQuote');
+  aq.onclick=()=>{P.addQuote();aq.textContent='Salvo ✓ — veja em Orçamentos';setTimeout(()=>{aq.textContent='+ Salvar orçamento';},1800);};
+  $('#copyQuote').onclick=async e=>{if(!last)return;const r=model(P.getLot()||1);
+    const t=S.nome+' ('+S.mat+', '+nf(S.peso)+'g, '+hhmm(r.h)+(P.getLot()>1?' · lote de '+nf(P.getLot())+' un.':'')+') — custo '+brl(r.custo)+' · venda '+brl(r.preco)+' · lucro '+brl(r.lucro);
+    try{await navigator.clipboard.writeText(t);e.target.textContent='Copiado ✓';setTimeout(()=>e.target.textContent='Copiar resumo',1600);}catch(_){alert(t);}};
+
+  /* ---- presets: reset total antes de aplicar, sem vazar estado ---- */
+  $$('#presets .pre').forEach(b=>b.onclick=()=>{
+    const p=PRESETS[b.dataset.p];
+    Object.assign(S,DEF);P.setLot(0);
+    Object.keys(p).forEach(k=>{S[k]=p[k];});
+    P.saveSettings();
+    P.syncAll();
+    $$('[data-ka]').forEach(i=>{i.checked=S[i.dataset.ka];});
+    if(p.mat)P.setMat(p.mat); // dispara p3d:mat → paintChips + calc
+    P.paintRanges();calc();flashPanel();
+    $('#calculadora').scrollIntoView({behavior:'smooth',block:'start'});
+  });
+
+  calc();
+})();

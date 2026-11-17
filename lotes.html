@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lotes e meta mensal — Precifica 3D</title>
+<meta name="description" content="Compare o preço da mesma peça em lotes de 1, 5, 20 ou 100 unidades e descubra quantas peças, horas e quilos você precisa para bater sua meta de lucro mensal.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<script>document.documentElement.classList.remove('no-js')</script>
+</head>
+<body>
+<div class="grain"></div>
+
+<header class="top">
+  <div class="top-in">
+    <a class="brand" href="index.html"><span class="mark"><i></i><i></i><i></i><i></i></span>PRECIFICA<span>3D</span></a>
+    <nav class="nav">
+      <a href="index.html">Calculadora</a>
+      <a href="materiais.html">Materiais</a>
+      <a href="lotes.html" aria-current="page">Lotes &amp; Meta</a>
+      <a href="orcamentos.html">Orçamentos</a>
+      <a href="guia.html">Guia</a>
+      <a href="dados.html">Dados</a>
+      <a href="investimento.html">Investimento</a>
+    </nav>
+    <div class="top-price">Peça atual <b id="chipPrice">R$ 0,00</b></div>
+  </div>
+</header>
+
+<main id="top">
+  <div class="wrap">
+
+  <!-- TIRAGENS -->
+  <section id="tiragens" class="blk">
+    <div class="head rv">
+      <div>
+        <div class="kick">03 / Escala</div>
+        <h1>Lote muda o preço: o mesmo projeto em 1, 5, 20 ou 100 peças</h1>
+      </div>
+      <p>O preparo do arquivo e a embalagem dividem-se entre as unidades do lote; acima do seu volume mensal, os custos fixos também se diluem. Clique em uma linha para travar esse lote como base do orçamento.</p>
+    </div>
+    <div class="tblwrap rv">
+      <table><thead><tr><th>Lote</th><th>Custo por peça</th><th>Preço por peça</th><th>Lucro por peça</th><th>Faturamento</th><th>Lucro do lote</th></tr></thead><tbody id="lotTable"></tbody></table>
+    </div>
+    <p class="note" id="lotHint"></p>
+    <p class="note">Peça atual: <span id="lotPiece">—</span> — <a href="index.html">ajustar os números na calculadora</a>.</p>
+  </section>
+
+  <!-- META -->
+  <section id="meta" class="blk" style="padding-top:0">
+    <div class="head rv">
+      <div>
+        <div class="kick">04 / Calculadora reversa</div>
+        <h2>Quanto você precisa imprimir para pagar suas contas?</h2>
+      </div>
+      <p>Defina a meta e veja o número real de peças, horas de máquina e quilos de filamento necessários com o preço atual da calculadora.</p>
+    </div>
+    <div class="goal rv">
+      <div class="rd-label">Meta de lucro no mês</div>
+      <div class="big"><span id="metaVal">R$ 4.000</span></div>
+      <div class="field" style="margin-top:14px">
+        <input type="range" data-k="meta" min="500" max="30000" step="100" value="4000" aria-label="Meta mensal">
+      </div>
+      <div class="rows">
+        <div><b id="mPecas">—</b><span>peças por mês</span></div>
+        <div><b id="mDias">—</b><span>peças por dia útil</span></div>
+        <div><b id="mHoras">—</b><span>horas de máquina</span></div>
+        <div><b id="mKg">—</b><span>kg de filamento</span></div>
+        <div><b id="mFat">—</b><span>faturamento bruto</span></div>
+        <div><b id="mMaq">—</b><span>impressoras necessárias</span></div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div><b>PRECIFICA3D</b><br>Calculadora de precificação para impressão 3D — valores de referência, ajuste com seus números reais.</div>
+    <div class="mono" style="text-align:right">custo · margem · risco<br>sem cadastro, roda offline</div>
+  </footer>
+  </div>
+</main>
+
+<script src="js/core.js"></script>
+<script src="js/lotes.js"></script>
+</body>
+</html>

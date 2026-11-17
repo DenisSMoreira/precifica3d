@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Guia de precificação e perguntas frequentes — Precifica 3D</title>
+<meta name="description" content="Sete regras práticas para não vender prejuízo na impressão 3D, a anatomia completa do preço (filamento, energia, depreciação, risco) e as perguntas frequentes da calculadora.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<script>document.documentElement.classList.remove('no-js')</script>
+</head>
+<body>
+<div class="grain"></div>
+
+<header class="top">
+  <div class="top-in">
+    <a class="brand" href="index.html"><span class="mark"><i></i><i></i><i></i><i></i></span>PRECIFICA<span>3D</span></a>
+    <nav class="nav">
+      <a href="index.html">Calculadora</a>
+      <a href="materiais.html">Materiais</a>
+      <a href="lotes.html">Lotes &amp; Meta</a>
+      <a href="orcamentos.html">Orçamentos</a>
+      <a href="guia.html" aria-current="page">Guia</a>
+      <a href="dados.html">Dados</a>
+      <a href="investimento.html">Investimento</a>
+    </nav>
+    <div class="top-price">Peça atual <b id="chipPrice">R$ 0,00</b></div>
+  </div>
+</header>
+
+<main id="top">
+  <div class="wrap">
+
+  <!-- GUIA -->
+  <section id="guia" class="blk">
+    <div class="head rv">
+      <div>
+        <div class="kick">06 / Guia</div>
+        <h1>Sete regras para não vender prejuízo</h1>
+      </div>
+      <p>Regras práticas de quem imprime e entrega — cada uma entra em algum campo da <a href="index.html">calculadora</a>.</p>
+    </div>
+    <div class="rules rv">
+      <div class="rule-i"><div><h4>Custo de impressão não é só filamento</h4><p>Somando energia, depreciação e manutenção, uma máquina comum custa entre R$ 0,90 e R$ 2,20 por hora rodando. Uma peça de 9 horas carrega quase R$ 15 de máquina antes do primeiro gramo de plástico.</p></div></div>
+      <div class="rule-i"><div><h4>Sua hora tem preço, mesmo sem funcionário</h4><p>Fatiar, nivelar, retirar suporte, fotografar e embalar é trabalho. Coloque o valor da sua hora no bloco 04 — se você não cobra, está financiando o cliente.</p></div></div>
+      <div class="rule-i"><div><h4>Errar também custa</h4><p>A taxa de falha multiplica o custo real. Com 15% de insucesso, cada peça boa carrega o custo de uma fração de peça perdida. Ajuste esse número com o seu histórico, não com o desejado.</p></div></div>
+      <div class="rule-i"><div><h4>Taxa de plataforma incide sobre o preço, não sobre o lucro</h4><p>Marketplace + imposto de 20% fazem seu custo de 30 virar quase 40 do preço final. O preço correto é custo × (1 + margem) ÷ (1 − taxa), exatamente como a calculadora faz.</p></div></div>
+      <div class="rule-i"><div><h4>Fixos se diluem com volume</h4><p>Aluguel, internet e anúncios divididos por 20 peças doem; por 200, quase somem. Por isso o preço de atacado pode cair sem morder sua margem — veja a <a href="lotes.html">tabela de tiragens</a>.</p></div></div>
+      <div class="rule-i"><div><h4>Tenha três preços: mínimo, sugerido e premium</h4><p>O mínimo é para não perder dinheiro em promoção. O sugerido é o seu dia a dia. O premium é personalização, prazo curto e material nobre — é ali que está o lucro de verdade.</p></div></div>
+      <div class="rule-i"><div><h4>Nunca concorra por preço com quem vende pronto</h4><p>Se o anúncio do concorrente está abaixo do seu custo de produção, mude o campo de batalha: acabamento, material técnico, prazo, sob medida e lote fechado. A calculadora serve para você saber onde é imbatível.</p></div></div>
+    </div>
+  </section>
+
+  <!-- ANATOMIA -->
+  <section id="anat-secao" class="blk" style="padding-top:0">
+    <div class="head rv">
+      <div>
+        <div class="kick">05 / Anatomia do preço</div>
+        <h2>Cada camada que compõe o seu preço</h2>
+      </div>
+      <p>Os números são da peça atual salva na <a href="index.html">calculadora</a>.</p>
+    </div>
+    <div class="panel rv" style="padding:22px">
+      <div class="stacksec" id="anat"></div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="blk" style="padding-top:0">
+    <div class="head rv"><div><div class="kick">08 / Dúvidas</div><h2>Perguntas frequentes</h2></div></div>
+    <div class="faq rv">
+      <div class="fq"><button aria-expanded="false" aria-controls="fq-a1">Como a calculadora chega no preço final?</button><div class="a" id="fq-a1"><p>Somamos material, energia, depreciação, manutenção, mão de obra, embalagem e extras; essa parte variável é dividida por (1 − taxa de falha) para cobrir as peças perdidas; depois soma-se o rateio dos custos fixos do mês. Por fim aplicamos a margem e dividimos por (1 − imposto − taxa da plataforma), porque essas duas cobram sobre o preço de venda.</p></div></div>
+      <div class="fq"><button aria-expanded="false" aria-controls="fq-a2">De quanto em quanto tempo devo atualizar a vida útil da máquina?</button><div class="a" id="fq-a2"><p>Toda vez que trocar bico, cinta, mesa ou fonte. Some o que já gastou em peças e divida pelas horas acumuladas — isso corrige a depreciação para a realidade, e não para a teoria.</p></div></div>
+      <div class="fq"><button aria-expanded="false" aria-controls="fq-a3">Serve para resina e para impressoras de grande formato?</button><div class="a" id="fq-a3"><p>Serve: use o valor real do frasco por litro no campo "preço do kg", informe o consumo em gramas e ajuste a manutenção (luvas, filtro, tanque e película entram aí). O custo de máquina deve refletir o preço do equipamento.</p></div></div>
+      <div class="fq"><button aria-expanded="false" aria-controls="fq-a4">Qual margem devo usar?</button><div class="a" id="fq-a4"><p>Para itens de catálogo e brindes, margem sobre custo entre 100% e 200%. Para peças técnicas sob medida, 250% a 400%, porque o valor está na engenharia e não no plástico. O mercado aceita mais quando você resolve um problema, não quando vende gramas.</p></div></div>
+      <div class="fq"><button aria-expanded="false" aria-controls="fq-a5">Por que meus preços ficam altos demais para o marketplace?</button><div class="a" id="fq-a5"><p>Porque o anúncio competidor provavelmente esqueceu depreciação, falha e taxa de plataforma. Compare seu preço com a coluna "mínimo": se você está acima dela, o problema é concorrência; se está abaixo, o problema é custo.</p></div></div>
+      <div class="fq"><button aria-expanded="false" aria-controls="fq-a6">Os dados ficam em algum servidor?</button><div class="a" id="fq-a6"><p>Não. Tudo roda no seu navegador e os preços de materiais e orçamentos ficam no armazenamento local do dispositivo. Sem cadastro e sem envio de dados.</p></div></div>
+    </div>
+  </section>
+
+  <footer>
+    <div><b>PRECIFICA3D</b><br>Calculadora de precificação para impressão 3D — valores de referência, ajuste com seus números reais.</div>
+    <div class="mono" style="text-align:right">custo · margem · risco<br>sem cadastro, roda offline</div>
+  </footer>
+  </div>
+</main>
+
+<script src="js/core.js"></script>
+<script src="js/guia.js"></script>
+</body>
+</html>
