@@ -305,7 +305,108 @@
     });
   }
 
+  /* ============================================================
+     CURVA DE RETORNO — investido × faturado, acumulado por mês
+     (quebras de linha: investido = máquinas + compras + custo fixo; faturado = pedidos pagos/entregues)
+     ============================================================ */
+  const MK=d=>String(d||'').slice(0,7);
+  const kAdd=(k,n)=>{const p=k.split('-'),d=new Date(+p[0],+p[1]-1+n,1);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');};
+  const kLbl=(k,yr)=>{const p=k.split('-'),s=new Date(+p[0],+p[1]-1,1).toLocaleDateString('pt-BR',{month:'short'}).replace('.','');return s+(yr||p[1]==='01'?'/'+p[0].slice(2):'');};
+  const cf=v=>{const s=v<0?'−':'',a=Math.abs(v);
+    if(a>=1000)return s+'R$ '+nf(a/1000,a>=10000?0:1)+' mil';
+    return s+'R$ '+nf(a,0);};
+
+  function renderCurva(){
+    const host=$('#cChart');host.innerHTML='';
+    const meta=INV.meta||{};
+    const custoMes=Math.max(0,+meta.custoMes||0), metaMes=Math.max(0,+meta.metaMes||0);
+    const invEv=[],recEv=[];let undInv=0,undRec=0;
+    INV.printers.forEach(p=>{const k=MK(p.data),v=p.preco||0;if(k)invEv.push([k,v]);else undInv+=v;});
+    INV.buys.forEach(b=>{const k=MK(b.data),v=b.total||0;if(k)invEv.push([k,v]);else undInv+=v;});
+    P.orders.forEach(o=>{if(o.status!=='pago'&&o.status!=='entregue')return;const k=MK(o.dataPag||o.data),v=o.total||0;if(k)recEv.push([k,v]);else undRec+=v;});
+    const nowK=MK(today());
+    if(!invEv.length&&!recEv.length&&!undInv&&!undRec&&!custoMes){
+      $('#cInv').textContent='R$ 0,00';$('#cRec').textContent='R$ 0,00';$('#cRes').textContent='R$ 0,00';
+      $('#cBE').textContent='—';$('#cBE').style.color='';$('#cResCard').className='kpi';
+      const p=document.createElement('p');p.className='note';p.style.margin='6px 0';
+      p.textContent='Sem lançamentos ainda — cadastre máquinas, lance compras e pague pedidos na aba Pedidos para a curva ganhar vida.';
+      host.append(p);$('#cNote').textContent='—';return;
+    }
+    /* janela: do mês da primeira movimentação até hoje (máx. 61 meses; anteriores entram no marco inicial) */
+    const dated=invEv.concat(recEv).map(e=>e[0]).filter(Boolean).sort();
+    let startK=dated.length?dated[0]:kAdd(nowK,-5);
+    if(startK>nowK)startK=nowK;
+    const months=[];for(let k=startK;k<=nowK;k=kAdd(k,1)){months.push(k);if(months.length>=61)break;}
+    const i0=months[0],iE=months[months.length-1];
+    const inv=months.map(()=>0),rec=months.map(()=>0);
+    const place=(arr,ev,und)=>{ev.forEach(e=>{let kk=e[0];if(kk<i0)kk=i0;if(kk>iE)kk=iE;arr[months.indexOf(kk)]+=e[1];});if(und)arr[0]+=und;};
+    place(inv,invEv,undInv);place(rec,recEv,undRec);
+    if(custoMes)for(let i=0;i<months.length;i++)inv[i]+=custoMes;
+    const cInv=[],cRec=[],goal=metaMes?months.map((k,i)=>metaMes*(i+1)):null;
+    let a=0,b=0;months.forEach((k,i)=>{a+=inv[i];b+=rec[i];cInv.push(a);cRec.push(b);});
+    /* SVG responsivo via viewBox */
+    const NS='http://www.w3.org/2000/svg';
+    const sv=(t,at,st)=>{const e=document.createElementNS(NS,t);for(const x in at)e.setAttribute(x,at[x]);if(st)for(const x in st)e.style[x]=st[x];return e;};
+    const W=920,H=300,PL=72,PR=16,PT=22,PB=34,n=months.length;
+    let yMax=Math.max(...cInv,...cRec,...(goal||[0]));if(yMax<=0)yMax=1;yMax*=1.08;
+    const X=i=>n<2?(PL+(W-PL-PR)/2):PL+i*(W-PL-PR)/(n-1);
+    const Y=v=>H-PB-(v/yMax)*(H-PT-PB);
+    const svg=sv('svg',{viewBox:'0 0 '+W+' '+H,role:'img','aria-label':'Curva de investido contra faturado acumulado por mês'});
+    for(let q=0;q<=4;q++){const yv=yMax*q/4,y=Y(yv);
+      svg.append(sv('line',{x1:PL,x2:W-PR,y1:y,y2:y},{stroke:'var(--line)',strokeWidth:1}));
+      const t=sv('text',{x:PL-8,y:y+4,'text-anchor':'end'});t.textContent=cf(yv);
+      t.style.fill='var(--dim)';t.style.fontSize='11px';t.style.fontFamily='var(--m)';svg.append(t);}
+    const step=Math.max(1,Math.ceil(n/9));
+    months.forEach((k,i)=>{if(i%step!==0&&i!==n-1)return;
+      const t=sv('text',{x:X(i),y:H-PB+18,'text-anchor':'middle'});
+      t.textContent=kLbl(k,i===0);t.style.fill='var(--dim)';t.style.fontSize='11px';t.style.fontFamily='var(--m)';svg.append(t);});
+    const line=(arr,stroke,dash)=>{const pts=arr.map((v,i)=>X(i)+','+Y(v)).join(' ');
+      return sv('polyline',{points:pts,fill:'none'},{stroke:stroke,strokeWidth:2.4,strokeLinejoin:'round',strokeLinecap:'round',strokeDasharray:dash||'none'});};
+    const area=(arr,fill)=>{const pts=arr.map((v,i)=>X(i)+','+Y(v)).join(' L');
+      return sv('path',{d:'M'+X(0)+','+(H-PB)+' L'+pts+' L'+X(n-1)+','+(H-PB)+' Z'},{fill:fill});};
+    svg.append(area(cInv,'rgba(193,72,31,.10)'),area(cRec,'rgba(23,163,152,.14)'));
+    if(goal)svg.append(line(goal,'var(--amber)','6 5'));
+    svg.append(line(cInv,'var(--rust)'),line(cRec,'var(--teal)'));
+    if(n<=18){cInv.forEach((v,i)=>svg.append(sv('circle',{cx:X(i),cy:Y(v),r:2.6},{fill:'var(--rust)'})));
+      cRec.forEach((v,i)=>svg.append(sv('circle',{cx:X(i),cy:Y(v),r:2.6},{fill:'var(--teal)'})));}
+    let be=-1;for(let i=0;i<n;i++)if(cRec[i]>=cInv[i]&&cRec[i]>0){be=i;break;}
+    if(be>=0){
+      svg.append(sv('circle',{cx:X(be),cy:Y(cRec[be]),r:6},{fill:'none',stroke:'#5FD89F',strokeWidth:2.5}));
+      const t=sv('text',{x:X(be),y:Math.max(14,Y(cRec[be])-13),'text-anchor':'middle'});
+      t.textContent='quitou ✓';t.style.fill='#5FD89F';t.style.fontSize='12px';t.style.fontWeight='600';t.style.fontFamily='var(--m)';svg.append(t);}
+    host.append(svg);
+    /* KPIs + nota com projeção da meta */
+    const invT=cInv[n-1],recT=cRec[n-1],res=recT-invT;
+    $('#cInv').textContent=cf(invT);$('#cRec').textContent=cf(recT);
+    $('#cRes').textContent=brl(res);$('#cResCard').className='kpi '+(res>=0?'pos':'neg');
+    if(be>=0){$('#cBE').textContent='quitou em '+kLbl(months[be],true);$('#cBE').style.color='#5FD89F';}
+    else{$('#cBE').textContent='faltam '+cf(invT-recT);$('#cBE').style.color='var(--amber)';}
+    const parts=[];
+    if(be>=0)parts.push('a operação se quitou em '+kLbl(months[be],true)+' — dali para frente, o faturado vira lucro.');
+    else{
+      const span=Math.min(3,Math.max(1,n-1)),base=Math.max(0,n-1-span);
+      const pace=((cRec[n-1]-cRec[base])-(cInv[n-1]-cInv[base]))/span;
+      if(pace>0){const mA=Math.ceil((invT-recT)/pace);
+        parts.push('no ritmo dos últimos '+nf(span)+(span>1?' meses (':' mês (')+'+'+cf(pace)+'/mês), previsão de quitação em '+kLbl(kAdd(nowK,mA),true)+' (~'+nf(mA)+' meses).');}
+      else parts.push('ainda sem ritmo de pagamento: sem pedidos pagos entrando acima dos custos, a conta não anda.');
+      if(metaMes){const pm=metaMes-custoMes;
+        if(pm>0){const m2=Math.ceil((invT-recT)/pm);
+          parts.push('com a meta de '+brl(metaMes)+' faturados por mês, quitaria em ~'+nf(m2)+' meses ('+kLbl(kAdd(nowK,m2),true)+').');}}
+    }
+    if(custoMes)parts.push('custo fixo de '+brl(custoMes)+'/mês já embutido na linha investido.');
+    if(undInv||undRec)parts.push('lançamentos sem data entram no primeiro mês do gráfico — preencha as datas em Frota/Lançamentos para a curva ficar fiel.');
+    $('#cNote').textContent=parts.join(' · ');
+  }
+  const mCusto=$('#f-m-custo'),mMeta=$('#f-m-meta');
+  mCusto.value=INV.meta.custoMes||'';mMeta.value=INV.meta.metaMes||'';
+  function saveMeta(){INV.meta={};
+    const c=parseFloat(mCusto.value),g=parseFloat(mMeta.value);
+    if(isFinite(c)&&c>0)INV.meta.custoMes=c;
+    if(isFinite(g)&&g>0)INV.meta.metaMes=g;
+    P.invStore();renderCurva();}
+  mCusto.addEventListener('change',saveMeta);mMeta.addEventListener('change',saveMeta);
+
   /* ---------- tudo que depende do estado ---------- */
-  function renderAll(){renderPrinters();renderBuyChips();renderBuys();renderKpis();renderMonths();renderCats();renderStock();}
+  function renderAll(){renderPrinters();renderBuyChips();renderBuys();renderKpis();renderMonths();renderCats();renderStock();renderCurva();}
   pFormFill(null);pFormMode();bFill(null);renderAll();
 })();

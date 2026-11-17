@@ -236,6 +236,10 @@ input[type=date]{color-scheme:dark}
 .rowacts .x{background:none;border:1px solid var(--line);color:var(--dim);width:30px;height:30px;cursor:pointer;transition:.18s}
 .rowacts .x:hover{border-color:var(--hot);color:var(--hot)}
 .bars{display:flex;align-items:flex-end;gap:6px;height:150px;padding:6px 2px 0;border-bottom:1px solid var(--line)}
+#cChart svg{width:100%;height:auto;display:block;margin:2px 0 4px}
+.clegend{display:flex;flex-wrap:wrap;gap:6px 20px;margin:6px 0 2px}
+.clegend span{font-family:var(--m);font-size:12px;color:var(--dim);display:inline-flex;align-items:center;gap:7px}
+.clegend i{width:20px;border-top:3px solid;display:inline-block}
 .bcol{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%;min-width:0}
 .bcol .bar{width:100%;background:linear-gradient(180deg,var(--hot),rgba(255,92,26,.35));min-height:2px;transition:height .6s cubic-bezier(.3,.8,.2,1)}
 .bcol span{font-family:var(--m);font-size:9.5px;color:var(--dim);margin-top:6px;text-transform:uppercase}

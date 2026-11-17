@@ -66,11 +66,50 @@
     </div>
   </section>
 
+  <!-- CURVA DE RETORNO -->
+  <section id="curva" class="blk" style="padding-top:0">
+    <div class="head rv">
+      <div>
+        <div class="kick">11 / Curva de retorno</div>
+        <h1>Primeiro pagar a operação — depois vira lucro</h1>
+      </div>
+      <p>A curva acumula o que a operação custou (máquinas, compras e custo fixo) contra o que os pedidos pagos já trouxeram. Onde a linha teal cruza a linha da máquina, <b>a operação se quitou</b> — e o que vier depois é lucro.</p>
+    </div>
+    <div class="panel rv" style="padding:0;margin-bottom:18px">
+      <div class="kpis" style="border-bottom:none">
+        <div class="kpi neg"><b id="cInv">R$ 0,00</b><span>investido acumulado (máquinas + compras + custo fixo)</span></div>
+        <div class="kpi pos"><b id="cRec">R$ 0,00</b><span>faturado acumulado (pedidos pagos + entregues)</span></div>
+        <div class="kpi" id="cResCard"><b id="cRes">R$ 0,00</b><span>resultado até hoje (faturado − investido)</span></div>
+        <div class="kpi"><b id="cBE">—</b><span>break-even da operação</span></div>
+      </div>
+    </div>
+    <div class="panel rv" style="padding:18px">
+      <div class="p-head" style="margin:-18px -18px 16px"><span class="num">◠</span><h3>Investido × faturado — acumulado mês a mês</h3><span class="hint">desde a primeira compra registrada</span></div>
+      <div id="cChart"></div>
+      <div class="clegend">
+        <span><i style="border-color:var(--rust)"></i>investido acumulado</span>
+        <span><i style="border-color:var(--teal)"></i>faturado acumulado (pagos + entregues)</span>
+        <span><i style="border-color:var(--amber);border-top-style:dashed"></i>meta de faturamento (se definida)</span>
+      </div>
+      <div class="grid" style="margin-top:14px">
+        <div class="field">
+          <div class="f-top"><label for="f-m-custo">Custo fixo mensal da operação</label><span class="u">R$/mês</span></div>
+          <input type="number" id="f-m-custo" min="0" max="100000" step="10" placeholder="ex.: 350 — aluguel, energia, taxas…">
+        </div>
+        <div class="field">
+          <div class="f-top"><label for="f-m-meta">Meta de faturamento mensal</label><span class="u">R$/mês</span></div>
+          <input type="number" id="f-m-meta" min="0" max="200000" step="50" placeholder="ex.: 2000 — traça a régua da meta">
+        </div>
+      </div>
+      <p class="note" id="cNote">—</p>
+    </div>
+  </section>
+
   <!-- IMPRESSORAS -->
   <section id="frota" class="blk" style="padding-top:0">
     <div class="head rv">
       <div>
-        <div class="kick">11 / Frota</div>
+        <div class="kick">12 / Frota</div>
         <h1>Cadastro de impressoras</h1>
       </div>
       <p>Valor pago, vida útil e consumo de cada máquina. O botão <b>→ calculadora</b> leva esses números direto para os blocos de máquina e energia.</p>
@@ -145,7 +184,7 @@
   <section id="lancamentos" class="blk" style="padding-top:0">
     <div class="head rv">
       <div>
-        <div class="kick">12 / Lançamentos</div>
+        <div class="kick">13 / Lançamentos</div>
         <h1>Compra de filamento, apetrecho ou peça — lança aqui</h1>
       </div>
       <p>Cada lançamento alimenta o estoque de filamento, o gasto do mês e o total que cada impressora custou. Edite ou apague pela própria linha.</p>
@@ -221,7 +260,7 @@
   <section id="estoque" class="blk" style="padding-top:0">
     <div class="head rv">
       <div>
-        <div class="kick">13 / Estoque</div>
+        <div class="kick">14 / Estoque</div>
         <h1>Filamento comprado por material</h1>
       </div>
       <p>Quilos entrados pelo que você pagou — a média R$/kg de cada material é o número honesto para colocar na calculadora.</p>

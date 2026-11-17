@@ -51,11 +51,15 @@
   let quotes=[];try{const q=JSON.parse(localStorage.getItem('p3d_quotes')||'[]');if(Array.isArray(q))quotes=q;}catch(e){}
 
   /* ---- investimentos: impressoras cadastradas + lançamentos de compra ---- */
-  const INV={printers:[],buys:[]}; // buys: {tipo:'filamento'|'apetrecho'|'peca'|'outros'}
+  const INV={printers:[],buys:[],meta:{}}; // buys: {tipo:'filamento'|'apetrecho'|'peca'|'outros'} · meta: {custoMes,metaMes}
   try{const iv=JSON.parse(localStorage.getItem('p3d_inv')||'{}');
     if(iv&&typeof iv==='object'){
       if(Array.isArray(iv.printers))iv.printers.forEach(p=>{if(p&&typeof p.nome==='string')INV.printers.push(p);});
       if(Array.isArray(iv.buys))iv.buys.forEach(b=>{if(b&&typeof b.desc==='string')INV.buys.push(b);});
+      if(iv.meta&&typeof iv.meta==='object'){
+        if(isFinite(iv.meta.custoMes)&&iv.meta.custoMes>0)INV.meta.custoMes=iv.meta.custoMes;
+        if(isFinite(iv.meta.metaMes)&&iv.meta.metaMes>0)INV.meta.metaMes=iv.meta.metaMes;
+      }
     }}catch(e){}
 
   /* ---- pedidos: fluxo orçamento → pagamento → entrega ---- */
@@ -140,7 +144,7 @@
       settings:JSON.parse(JSON.stringify(S)),lote:lotSel,
       materials:MATERIALS.map(m=>({...m})),
       quotes:quotes.map(q=>({...q})),
-      inv:{printers:INV.printers.map(p=>({...p})),buys:INV.buys.map(b=>({...b}))},
+      inv:{printers:INV.printers.map(p=>({...p})),buys:INV.buys.map(b=>({...b})),meta:{...INV.meta}},
       orders:orders.map(o=>({...o}))};
   }
   function importData(obj){
@@ -161,6 +165,11 @@
     if(Array.isArray(obj.quotes))obj.quotes.forEach(q=>{if(q&&typeof q.nome==='string'&&isFinite(q.preco)&&isFinite(q.custo)){quotes.push(q);nQ++;}}); // mutado in-place: referências vivas
     let nP=0,nB=0;INV.printers.length=0;INV.buys.length=0;
     const iv=obj.inv&&typeof obj.inv==='object'?obj.inv:{};
+    INV.meta={};
+    if(iv.meta&&typeof iv.meta==='object'){
+      if(isFinite(iv.meta.custoMes)&&iv.meta.custoMes>0)INV.meta.custoMes=iv.meta.custoMes;
+      if(isFinite(iv.meta.metaMes)&&iv.meta.metaMes>0)INV.meta.metaMes=iv.meta.metaMes;
+    }
     if(Array.isArray(iv.printers))iv.printers.forEach(p=>{if(p&&typeof p.nome==='string'&&isFinite(p.preco)&&p.preco>=0){INV.printers.push(p);nP++;}});
     if(Array.isArray(iv.buys))iv.buys.forEach(b=>{if(b&&typeof b.desc==='string'&&isFinite(b.total)&&isFinite(b.qtd)){INV.buys.push(b);nB++;}});
     let nO=0;orders.length=0;
